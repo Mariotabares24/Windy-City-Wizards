@@ -1,0 +1,148 @@
+{
+  "bytes": 4939324,
+  "scale": 0.004795968459837634,
+  "sourceCenter": [
+    -0.000156,
+    87.7774925,
+    0
+  ],
+  "worldSize": [
+    0.43,
+    0.3761356581169569,
+    0.16136665114185653
+  ],
+  "nodes": [
+    {
+      "name": "headband",
+      "mesh": 0,
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "extras": {
+        "sourceComponent": "headband"
+      }
+    },
+    {
+      "name": "right-ear",
+      "mesh": 1,
+      "translation": [
+        0.17296676316898768,
+        -0.013320766427435552,
+        0
+      ],
+      "extras": {
+        "sourceComponent": "earcup_positive_x",
+        "suggestedFoldRotationZ": -1.1
+      }
+    },
+    {
+      "name": "left-ear",
+      "mesh": 2,
+      "translation": [
+        -0.17296676556697194,
+        -0.013320766427435552,
+        0
+      ],
+      "extras": {
+        "sourceComponent": "earcup_negative_x",
+        "suggestedFoldRotationZ": 1.1
+      }
+    }
+  ],
+  "extras": {
+    "source": "https://opengameart.org/content/headphones",
+    "license": "CC0-1.0",
+    "widthMeters": 0.43,
+    "centeredOnBounds": true,
+    "upAxis": "Y",
+    "partNames": [
+      "headband",
+      "right-ear",
+      "left-ear"
+    ],
+    "normalConvention": "OpenGL (+Y), converted from DirectX",
+    "changes": "Separated connected components; inferred earcup hinge pivots; normalized width to 0.43 m and centered bounding box; resized textures; combined ORM; inverted and normalized normal-map Y."
+  },
+  "textures": [
+    {
+      "name": "headphones-basecolor.jpg",
+      "format": "jpeg",
+      "mediaType": "image/jpeg",
+      "width": 1024,
+      "height": 1024,
+      "space": "srgb",
+      "channels": 3,
+      "depth": "uchar",
+      "density": 72,
+      "chromaSubsampling": "4:4:4",
+      "isProgressive": false,
+      "isPalette": false,
+      "hasProfile": false,
+      "hasAlpha": false,
+      "autoOrient": {
+        "width": 1024,
+        "height": 1024
+      }
+    },
+    {
+      "name": "headphones-orm.png",
+      "format": "png",
+      "mediaType": "image/png",
+      "width": 1024,
+      "height": 1024,
+      "space": "srgb",
+      "channels": 3,
+      "depth": "uchar",
+      "isProgressive": false,
+      "isPalette": false,
+      "bitsPerSample": 8,
+      "hasProfile": false,
+      "hasAlpha": false,
+      "autoOrient": {
+        "width": 1024,
+        "height": 1024
+      }
+    },
+    {
+      "name": "headphones-normal-gl.png",
+      "format": "png",
+      "mediaType": "image/png",
+      "width": 2048,
+      "height": 2048,
+      "space": "srgb",
+      "channels": 3,
+      "depth": "uchar",
+      "isProgressive": false,
+      "isPalette": false,
+      "bitsPerSample": 8,
+      "hasProfile": false,
+      "hasAlpha": false,
+      "autoOrient": {
+        "width": 2048,
+        "height": 2048
+      }
+    },
+    {
+      "name": "headphones-emissive.png",
+      "format": "png",
+      "mediaType": "image/png",
+      "width": 1024,
+      "height": 1024,
+      "space": "srgb",
+      "channels": 3,
+      "depth": "uchar",
+      "density": 72,
+      "isProgressive": false,
+      "isPalette": false,
+      "bitsPerSample": 8,
+      "hasProfile": false,
+      "hasAlpha": false,
+      "autoOrient": {
+        "width": 1024,
+        "height": 1024
+      }
+    }
+  ]
+}

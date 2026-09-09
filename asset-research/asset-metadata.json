@@ -1,0 +1,711 @@
+{
+  "headphones": {
+    "file": "C:\\Users\\Mario\\Documents\\Programming\\Astra_Accenture_Hackathon\\asset-research\\headphones-source\\Headphones\\Headphones.obj",
+    "names": [
+      "mtllib Headphones.mtl",
+      "g Headphones",
+      "usemtl Mat"
+    ],
+    "vertexCount": 1668,
+    "faceCount": 3324,
+    "triangles": 3324,
+    "min": [
+      -44.829475,
+      48.563759,
+      -16.823156
+    ],
+    "max": [
+      44.829163,
+      126.991226,
+      16.823156
+    ],
+    "size": [
+      89.658638,
+      78.42746700000001,
+      33.646312
+    ],
+    "center": [
+      -0.00015600000000048908,
+      87.7774925,
+      0
+    ],
+    "components": [
+      {
+        "vertexCount": 604,
+        "faceCount": 1204,
+        "min": [
+          -42.480122,
+          84.493538,
+          -7.114849
+        ],
+        "max": [
+          42.480118,
+          126.991226,
+          7.114849
+        ],
+        "size": [
+          84.96024,
+          42.497688,
+          14.229698
+        ],
+        "center": [
+          -0.0000020000000020559128,
+          105.74238199999999,
+          0
+        ]
+      },
+      {
+        "vertexCount": 532,
+        "faceCount": 1060,
+        "min": [
+          27.300592,
+          48.563759,
+          -16.823156
+        ],
+        "max": [
+          44.829163,
+          87.225899,
+          16.823156
+        ],
+        "size": [
+          17.528571,
+          38.66214,
+          33.646312
+        ],
+        "center": [
+          36.0648775,
+          67.894829,
+          0
+        ]
+      },
+      {
+        "vertexCount": 532,
+        "faceCount": 1060,
+        "min": [
+          -44.829475,
+          48.563759,
+          -16.823156
+        ],
+        "max": [
+          -27.300905,
+          87.225899,
+          16.823156
+        ],
+        "size": [
+          17.528570000000002,
+          38.66214,
+          33.646312
+        ],
+        "center": [
+          -36.06519,
+          67.894829,
+          0
+        ]
+      }
+    ]
+  },
+  "shirt": {
+    "file": "C:\\Users\\Mario\\Documents\\Programming\\Astra_Accenture_Hackathon\\asset-research\\shirt-source\\T-Shirt and Hanger\\T-ShirtandHanger.obj",
+    "names": [
+      "g MB_T_ShirtHanger_bmp001"
+    ],
+    "vertexCount": 719,
+    "faceCount": 1024,
+    "triangles": 2048,
+    "min": [
+      -4.8332,
+      -9.8425,
+      -21.1899
+    ],
+    "max": [
+      11.1463,
+      9.8425,
+      -20.4954
+    ],
+    "size": [
+      15.9795,
+      19.685,
+      0.6945000000000014
+    ],
+    "center": [
+      3.15655,
+      0,
+      -20.84265
+    ],
+    "components": [
+      {
+        "vertexCount": 719,
+        "faceCount": 1024,
+        "min": [
+          -4.8332,
+          -9.8425,
+          -21.1899
+        ],
+        "max": [
+          11.1463,
+          9.8425,
+          -20.4954
+        ],
+        "size": [
+          15.9795,
+          19.685,
+          0.6945000000000014
+        ],
+        "center": [
+          3.15655,
+          0,
+          -20.84265
+        ]
+      }
+    ]
+  },
+  "chair": {
+    "file": "C:\\Users\\Mario\\Documents\\Programming\\Astra_Accenture_Hackathon\\asset-research\\SheenChair.glb",
+    "bytes": 4125648,
+    "nodes": [
+      {
+        "mesh": 0,
+        "name": "SheenChair_fabric"
+      },
+      {
+        "mesh": 1,
+        "name": "SheenChair_wood"
+      },
+      {
+        "mesh": 2,
+        "name": "SheenChair_metal"
+      },
+      {
+        "mesh": 3,
+        "translation": [
+          -0.0006629925,
+          0.23622,
+          0.0596007444
+        ],
+        "rotation": [
+          -0.0436193831,
+          0,
+          0,
+          0.999048233
+        ],
+        "name": "SheenChair_label"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "SheenChair_fabric",
+        "primitives": [
+          {
+            "material": "fabric Mystere Mango Velvet",
+            "indices": 78528,
+            "position": {
+              "bufferView": 1,
+              "componentType": 5126,
+              "count": 14350,
+              "max": [
+                0.412535578,
+                0.6861773,
+                0.293540359
+              ],
+              "min": [
+                -0.4140224,
+                0.226573884,
+                -0.2767251
+              ],
+              "type": "VEC3",
+              "name": "accessorPositions"
+            }
+          }
+        ]
+      },
+      {
+        "name": "SheenChair_wood",
+        "primitives": [
+          {
+            "material": "wood Brown",
+            "indices": 29376,
+            "position": {
+              "bufferView": 1,
+              "byteOffset": 344400,
+              "componentType": 5126,
+              "count": 5508,
+              "max": [
+                0.390372425,
+                0.640484333,
+                0.2655284
+              ],
+              "min": [
+                -0.39169845,
+                0.005148451,
+                -0.275435269
+              ],
+              "type": "VEC3",
+              "name": "accessorPositions"
+            }
+          }
+        ]
+      },
+      {
+        "name": "SheenChair_metal",
+        "primitives": [
+          {
+            "material": "metal",
+            "indices": 11520,
+            "position": {
+              "bufferView": 1,
+              "byteOffset": 476592,
+              "componentType": 5126,
+              "count": 2520,
+              "max": [
+                0.3399512,
+                0.501481354,
+                0.220822945
+              ],
+              "min": [
+                -0.3399512,
+                -0.00006977785,
+                -0.239334568
+              ],
+              "type": "VEC3",
+              "name": "accessorPositions"
+            }
+          }
+        ]
+      },
+      {
+        "name": "SheenChair_label",
+        "primitives": [
+          {
+            "material": "label",
+            "indices": 384,
+            "position": {
+              "bufferView": 1,
+              "byteOffset": 537072,
+              "componentType": 5126,
+              "count": 81,
+              "max": [
+                0.136181846,
+                0.0100558968,
+                0.0467727147
+              ],
+              "min": [
+                -0.135885492,
+                0.005801852,
+                -0.110709868
+              ],
+              "type": "VEC3",
+              "name": "accessorPositions"
+            }
+          }
+        ]
+      }
+    ],
+    "materials": [
+      {
+        "pbrMetallicRoughness": {
+          "baseColorFactor": [
+            0.883,
+            0.035,
+            0,
+            1
+          ],
+          "baseColorTexture": {
+            "index": 2,
+            "extensions": {
+              "KHR_texture_transform": {
+                "offset": [
+                  -3,
+                  3
+                ],
+                "scale": [
+                  7,
+                  7
+                ],
+                "texCoord": 0
+              }
+            }
+          },
+          "metallicFactor": 0,
+          "roughnessFactor": 0.8
+        },
+        "normalTexture": {
+          "index": 0,
+          "scale": 0.6,
+          "extensions": {
+            "KHR_texture_transform": {
+              "offset": [
+                -0.5,
+                0.5
+              ],
+              "scale": [
+                2,
+                2
+              ],
+              "texCoord": 0
+            }
+          }
+        },
+        "occlusionTexture": {
+          "index": 1,
+          "texCoord": 1,
+          "extensions": {
+            "KHR_texture_transform": {
+              "texCoord": 1
+            }
+          }
+        },
+        "extensions": {
+          "KHR_materials_sheen": {
+            "sheenColorFactor": [
+              1,
+              0.329,
+              0.1
+            ],
+            "sheenRoughnessFactor": 0.8
+          }
+        },
+        "name": "fabric Mystere Mango Velvet"
+      },
+      {
+        "pbrMetallicRoughness": {
+          "baseColorFactor": [
+            0.14,
+            0.07,
+            0.01,
+            1
+          ],
+          "baseColorTexture": {
+            "index": 3,
+            "extensions": {
+              "KHR_texture_transform": {
+                "offset": [
+                  -0.8635584,
+                  1.12502563
+                ],
+                "rotation": 0.08726647,
+                "scale": [
+                  3,
+                  3
+                ],
+                "texCoord": 0
+              }
+            }
+          },
+          "metallicRoughnessTexture": {
+            "index": 4,
+            "extensions": {
+              "KHR_texture_transform": {
+                "offset": [
+                  -0.8635584,
+                  1.12502563
+                ],
+                "rotation": 0.08726647,
+                "scale": [
+                  3,
+                  3
+                ],
+                "texCoord": 0
+              }
+            }
+          }
+        },
+        "occlusionTexture": {
+          "index": 1,
+          "texCoord": 1,
+          "extensions": {
+            "KHR_texture_transform": {
+              "texCoord": 1
+            }
+          }
+        },
+        "name": "wood Brown"
+      },
+      {
+        "pbrMetallicRoughness": {
+          "baseColorFactor": [
+            0.28,
+            0.26,
+            0.23,
+            1
+          ],
+          "roughnessFactor": 0.3
+        },
+        "occlusionTexture": {
+          "index": 1,
+          "texCoord": 1,
+          "extensions": {
+            "KHR_texture_transform": {
+              "texCoord": 1
+            }
+          }
+        },
+        "name": "metal"
+      },
+      {
+        "pbrMetallicRoughness": {
+          "baseColorTexture": {
+            "index": 5,
+            "extensions": {
+              "KHR_texture_transform": {
+                "texCoord": 0
+              }
+            }
+          },
+          "metallicFactor": 0
+        },
+        "occlusionTexture": {
+          "index": 1,
+          "texCoord": 1,
+          "extensions": {
+            "KHR_texture_transform": {
+              "texCoord": 1
+            }
+          }
+        },
+        "name": "label"
+      },
+      {
+        "pbrMetallicRoughness": {
+          "baseColorFactor": [
+            0,
+            0.094,
+            0.099,
+            1
+          ],
+          "baseColorTexture": {
+            "index": 2,
+            "extensions": {
+              "KHR_texture_transform": {
+                "offset": [
+                  -3,
+                  3
+                ],
+                "scale": [
+                  7,
+                  7
+                ],
+                "texCoord": 0
+              }
+            }
+          },
+          "metallicFactor": 1,
+          "roughnessFactor": 0.8
+        },
+        "normalTexture": {
+          "index": 0,
+          "scale": 0.6,
+          "extensions": {
+            "KHR_texture_transform": {
+              "offset": [
+                -0.5,
+                0.5
+              ],
+              "scale": [
+                2,
+                2
+              ],
+              "texCoord": 0
+            }
+          }
+        },
+        "occlusionTexture": {
+          "index": 1,
+          "texCoord": 1,
+          "extensions": {
+            "KHR_texture_transform": {
+              "texCoord": 1
+            }
+          }
+        },
+        "extensions": {
+          "KHR_materials_sheen": {
+            "sheenColorFactor": [
+              0.013,
+              0.284,
+              0.298
+            ],
+            "sheenRoughnessFactor": 0.8
+          }
+        },
+        "name": "fabric Mystere Peacock Velvet"
+      },
+      {
+        "pbrMetallicRoughness": {
+          "baseColorFactor": [
+            0.036,
+            0.036,
+            0.036,
+            1
+          ],
+          "baseColorTexture": {
+            "index": 3,
+            "extensions": {
+              "KHR_texture_transform": {
+                "offset": [
+                  -0.8635584,
+                  1.12502563
+                ],
+                "rotation": 0.08726647,
+                "scale": [
+                  3,
+                  3
+                ],
+                "texCoord": 0
+              }
+            }
+          },
+          "metallicRoughnessTexture": {
+            "index": 6,
+            "extensions": {
+              "KHR_texture_transform": {
+                "offset": [
+                  -0.8635584,
+                  1.12502563
+                ],
+                "rotation": 0.08726647,
+                "scale": [
+                  3,
+                  3
+                ],
+                "texCoord": 0
+              }
+            }
+          }
+        },
+        "occlusionTexture": {
+          "index": 1,
+          "texCoord": 1,
+          "extensions": {
+            "KHR_texture_transform": {
+              "texCoord": 1
+            }
+          }
+        },
+        "name": "wood Black"
+      }
+    ],
+    "images": [
+      {
+        "bufferView": 3,
+        "mimeType": "image/png"
+      },
+      {
+        "bufferView": 4,
+        "mimeType": "image/png"
+      },
+      {
+        "bufferView": 5,
+        "mimeType": "image/png"
+      },
+      {
+        "bufferView": 6,
+        "mimeType": "image/png"
+      },
+      {
+        "bufferView": 7,
+        "mimeType": "image/png"
+      },
+      {
+        "bufferView": 8,
+        "mimeType": "image/png"
+      },
+      {
+        "bufferView": 9,
+        "mimeType": "image/png"
+      }
+    ],
+    "extensionsUsed": [
+      "KHR_texture_transform",
+      "KHR_materials_sheen",
+      "KHR_materials_variants"
+    ]
+  },
+  "boombox": {
+    "file": "C:\\Users\\Mario\\Documents\\Programming\\Astra_Accenture_Hackathon\\asset-research\\BoomBox.glb",
+    "bytes": 10614184,
+    "nodes": [
+      {
+        "mesh": 0,
+        "rotation": [
+          0,
+          1,
+          0,
+          0
+        ],
+        "name": "BoomBox"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "BoomBox",
+        "primitives": [
+          {
+            "material": "BoomBox_Mat",
+            "indices": 18108,
+            "position": {
+              "bufferView": 3,
+              "componentType": 5126,
+              "count": 3575,
+              "type": "VEC3",
+              "max": [
+                0.009921154,
+                0.00977163,
+                0.0100762453
+              ],
+              "min": [
+                -0.009921154,
+                -0.00977163,
+                -0.0100762453
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "materials": [
+      {
+        "pbrMetallicRoughness": {
+          "baseColorTexture": {
+            "index": 0
+          },
+          "metallicRoughnessTexture": {
+            "index": 1
+          }
+        },
+        "normalTexture": {
+          "index": 2
+        },
+        "occlusionTexture": {
+          "index": 1
+        },
+        "emissiveFactor": [
+          1,
+          1,
+          1
+        ],
+        "emissiveTexture": {
+          "index": 3
+        },
+        "name": "BoomBox_Mat"
+      }
+    ],
+    "images": [
+      {
+        "bufferView": 5,
+        "mimeType": "image/png"
+      },
+      {
+        "bufferView": 6,
+        "mimeType": "image/png"
+      },
+      {
+        "bufferView": 7,
+        "mimeType": "image/png"
+      },
+      {
+        "bufferView": 8,
+        "mimeType": "image/png"
+      }
+    ]
+  }
+}

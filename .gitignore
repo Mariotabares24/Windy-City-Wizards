@@ -1,0 +1,43 @@
+# ---- dependencies ----
+node_modules/
+.pnpm-store/
+.pnp
+.pnp.*
+
+# ---- local toolchains / downloaded binaries ----
+.tools/
+
+# ---- build output / generated ----
+.next/
+.vinext/
+out/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# ---- deployment / infra caches ----
+.wrangler/
+.vercel/
+.openai/
+outputs/
+work/
+*.tar.gz
+
+# ---- environment / secrets ----
+.env
+.env.*
+*.pem
+*.key
+.dev.vars
+.dev.vars.*
+
+# ---- editor / OS ----
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*

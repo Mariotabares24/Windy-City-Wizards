@@ -1,0 +1,8 @@
+# CC0 Headphones by nisu. For full PBR use GLB, or bind ORM/normal/emissive maps manually.
+newmtl HeadphonesPBR
+Kd 1 1 1
+Ks 0.04 0.04 0.04
+Ns 100
+d 1
+illum 2
+map_Kd headphones-basecolor.jpg
