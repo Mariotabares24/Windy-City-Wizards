@@ -16,6 +16,7 @@ import {
   Hand,
   Maximize,
   Minimize,
+  Move,
   Pause,
   Play,
   RotateCcw,
@@ -330,6 +331,10 @@ export function Experience({ product: p }: { product: Product }) {
                       ghost={ghost}
                       onError={onRenderError}
                       onReady={onSceneReady}
+                      onManipulate={(n) => {
+                        if (n.rotation !== undefined) setRotation(n.rotation);
+                        if (n.position !== undefined) setPosition(n.position);
+                      }}
                     />
                   </Suspense>
                 </PreviewBoundary>
@@ -435,6 +440,25 @@ export function Experience({ product: p }: { product: Product }) {
               </div>
             </div>
             {error && <output className="notice">{error}</output>}
+            {camera && (
+              <div className="ar-gesture-bar">
+                <span>
+                  <Move size={15} /> Drag to move · pinch to resize · twist to
+                  rotate
+                </span>
+                <button
+                  className="text-button"
+                  disabled={!sceneReady}
+                  onClick={() => {
+                    setRotation(0);
+                    setPosition(0);
+                    spatial.current?.reset();
+                  }}
+                >
+                  <RotateCcw size={14} /> Reset placement
+                </button>
+              </div>
+            )}
             {p.category === 'home' && (
               <div className="spatial-adjustments">
                 <div>

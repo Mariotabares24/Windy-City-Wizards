@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     )
       throw new ApiError('Choose products from this catalog.');
     const id = uid();
-    const db = database();
+    const db = await database();
     await db.batch([
       db
         .prepare(

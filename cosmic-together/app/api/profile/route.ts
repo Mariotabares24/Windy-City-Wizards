@@ -19,7 +19,7 @@ const schema = z.object({
 export async function GET() {
   try {
     const id = await identity();
-    const row = await database()
+    const row = await (await database())
       .prepare('SELECT preferences FROM shoppers WHERE id=?')
       .bind(id)
       .first<{ preferences: string }>();
@@ -33,7 +33,7 @@ export async function PUT(req: Request) {
     const id = await identity();
     await protect(req, id);
     const p = schema.parse(await parseBody(req));
-    await database()
+    await (await database())
       .prepare(
         'INSERT INTO shoppers (id,preferences,created_at) VALUES (?,?,?) ON CONFLICT(id) DO UPDATE SET preferences=excluded.preferences',
       )
@@ -52,7 +52,7 @@ export async function DELETE(req: Request) {
   try {
     const id = await identity();
     await protect(req, id);
-    const db = database();
+    const db = await database();
     const owned = await db
       .prepare('SELECT id FROM circles WHERE owner=?')
       .bind(id)

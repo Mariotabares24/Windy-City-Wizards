@@ -1,7 +1,7 @@
 import { env } from 'cloudflare:workers';
 import { database } from '@/db';
 export async function eraseCircle(id: string) {
-  const db = database();
+  const db = await database();
   const snapshots = await db
     .prepare("SELECT id FROM messages WHERE circle_id=? AND type='snapshot'")
     .bind(id)
@@ -18,7 +18,7 @@ export async function eraseCircle(id: string) {
   ]);
 }
 export async function cleanupExpired() {
-  const rows = await database()
+  const rows = await (await database())
     .prepare('SELECT id FROM circles WHERE created_at < ? LIMIT 10')
     .bind(Date.now() - 86400000)
     .all<{ id: string }>();

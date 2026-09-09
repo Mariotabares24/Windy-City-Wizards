@@ -1,6 +1,6 @@
 'use client';
 import { Photo } from '@/components/photo';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import {
   Check,
   Copy,
@@ -12,6 +12,19 @@ import {
 } from 'lucide-react';
 import { api, circlePath } from '@/lib/client';
 import type { CircleState } from '@/lib/contracts';
+// Fallback copy for non-secure contexts (LAN IP over http) that lack the async
+// Clipboard API. execCommand is deprecated but remains the only such fallback.
+function legacyCopy(input: HTMLInputElement | null): boolean {
+  if (!input) return false;
+  input.focus();
+  input.select();
+  try {
+    // oxlint-disable-next-line typescript/no-deprecated
+    return document.execCommand('copy');
+  } catch {
+    return false;
+  }
+}
 export function useCircle(id: string | null) {
   const [circle, setCircle] = useState<CircleState | null>(null);
   const [error, setError] = useState('');
@@ -60,6 +73,7 @@ export function CirclePanel({
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
   const [localError, setLocalError] = useState('');
+  const linkInput = useRef<HTMLInputElement>(null);
   async function action(body: unknown) {
     setBusy(true);
     setLocalError('');
@@ -88,6 +102,24 @@ export function CirclePanel({
     typeof window !== 'undefined' && circle
       ? window.location.origin + '/party/' + circle.id
       : '';
+  const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])/.test(link);
+  async function copyLink() {
+    setLocalError('');
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(link);
+      } else if (!legacyCopy(linkInput.current)) {
+        throw new Error('copy failed');
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch {
+      const input = linkInput.current;
+      input?.focus();
+      input?.select();
+      setLocalError('Copy didn’t work here — the link is selected, press Ctrl/⌘+C.');
+    }
+  }
   return (
     <aside className="circle-panel">
       <div className="panel-title">
@@ -130,25 +162,25 @@ export function CirclePanel({
             ))}
           </div>
           <div className="invite-controls">
-            <input aria-label="Circle invitation link" readOnly value={link} />
-            <button
-              className="button small"
-              onClick={async () => {
-                try {
-                  await navigator.clipboard.writeText(link);
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 3000);
-                } catch {
-                  setLocalError(
-                    'Select the invitation link and copy it manually.',
-                  );
-                }
-              }}
-            >
+            <input
+              ref={linkInput}
+              aria-label="Circle invitation link"
+              readOnly
+              value={link}
+              onFocus={(e) => e.currentTarget.select()}
+            />
+            <button className="button small" onClick={copyLink}>
               {copied ? <Check size={15} /> : <Copy size={15} />}{' '}
               {copied ? 'Copied' : 'Copy'}
             </button>
           </div>
+          {isLocal && (
+            <p className="fine-print">
+              You’re on <strong>localhost</strong>. To open this on another
+              device, replace it with your computer’s LAN IP (e.g.
+              http://192.168.x.x:PORT) or share a tunnel URL.
+            </p>
+          )}
           <p className="fine-print">
             Only this shortlist and circle conversation are shared. Anyone with
             this invitation can join. Expires after 24 hours.

@@ -38,7 +38,7 @@ export async function parseBody(request: Request) {
   }
 }
 async function limit(key: string, max: number) {
-  const row = await database()
+  const row = await (await database())
     .prepare(
       'INSERT INTO rate_limits (key,count,expires_at) VALUES (?,1,?) ON CONFLICT(key) DO UPDATE SET count=count+1 RETURNING count',
     )
@@ -65,7 +65,7 @@ export async function protect(request: Request, owner: string, read = false) {
     await limit('network:' + key, read ? 1200 : 600);
   }
   if (Math.random() < 0.02)
-    await database()
+    await (await database())
       .prepare('DELETE FROM rate_limits WHERE expires_at < ?')
       .bind(Date.now())
       .run();
@@ -93,7 +93,7 @@ export function failure(error: unknown) {
 export const uid = () => crypto.randomUUID();
 export async function event(owner: string, name: string) {
   try {
-    await database()
+    await (await database())
       .prepare('INSERT INTO events (id,owner,name,created_at) VALUES (?,?,?,?)')
       .bind(uid(), owner, name, Date.now())
       .run();

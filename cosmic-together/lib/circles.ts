@@ -21,7 +21,7 @@ export type MemberRow = {
 export async function findCircle(id: string) {
   if (!/^[a-f0-9-]{36}$/.test(id))
     throw new ApiError('This invitation is not valid.', 404);
-  const c = await database()
+  const c = await (await database())
     .prepare('SELECT * FROM circles WHERE id=?')
     .bind(id)
     .first<CircleRow>();
@@ -36,13 +36,13 @@ export async function findCircle(id: string) {
   return c;
 }
 export async function findMember(circleId: string, owner: string) {
-  return database()
+  return (await database())
     .prepare('SELECT * FROM members WHERE circle_id=? AND owner=? AND demo=0')
     .bind(circleId, owner)
     .first<MemberRow>();
 }
 export async function systemMessage(circleId: string, text: string) {
-  await database()
+  await (await database())
     .prepare(
       'INSERT INTO messages (id,circle_id,name,text,type,created_at) VALUES (?,?,?,?,?,?)',
     )
@@ -50,7 +50,7 @@ export async function systemMessage(circleId: string, text: string) {
     .run();
 }
 export async function state(c: CircleRow, member: MemberRow) {
-  const db = database();
+  const db = await database();
   const [members, messages, votes, myVotes] = await Promise.all([
     db
       .prepare(

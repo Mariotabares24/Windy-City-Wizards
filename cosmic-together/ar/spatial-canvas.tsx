@@ -6,6 +6,7 @@ import { makeGhostHand } from './models';
 import { loadProduct, disposeObject } from './load-product';
 import { alignHandToControl } from './hand-guide';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
 import type { Product } from '@/lib/catalog';
 export type PoseAnchor = {
   x: number;
@@ -30,6 +31,8 @@ type Props = {
   ghost: boolean;
   onError: () => void;
   onReady: () => void;
+  // Reports drag/twist back so the accessible sliders stay in sync (camera mode).
+  onManipulate?: (next: { rotation?: number; position?: number }) => void;
 };
 export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
   function SpatialCanvas(
@@ -45,6 +48,7 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
       ghost,
       onError,
       onReady,
+      onManipulate,
     },
     ref,
   ) {
@@ -55,6 +59,11 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
     useEffect(() => {
       current.current = { rotation, position, tutorial, playing, ghost };
     }, [rotation, position, tutorial, playing, ghost]);
+    // Keep the manipulate callback current without re-running the scene effect.
+    const manipulate = useRef(onManipulate);
+    useEffect(() => {
+      manipulate.current = onManipulate;
+    }, [onManipulate]);
     useImperativeHandle(
       ref,
       () => ({
@@ -78,6 +87,7 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
         return;
       }
       canvas.current = renderer.domElement;
+      let disposed = false;
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.7));
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -87,12 +97,32 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
       el.appendChild(renderer.domElement);
       const scene = new THREE.Scene();
       const pmrem = new THREE.PMREMGenerator(renderer);
-      const environment = new RoomEnvironment();
-      const environmentMap = pmrem.fromScene(environment, 0.04);
-      scene.environment = environmentMap.texture;
-      scene.environmentIntensity = 0.8;
-      environment.dispose();
-      pmrem.dispose();
+      // Start on RoomEnvironment so IBL is present immediately, then upgrade to
+      // the studio HDRI for crisper, more photographic specular once it loads.
+      const roomEnvironment = new RoomEnvironment();
+      const roomMap = pmrem.fromScene(roomEnvironment, 0.04);
+      roomEnvironment.dispose();
+      scene.environment = roomMap.texture;
+      scene.environmentIntensity = 0.9;
+      let hdrTarget: THREE.WebGLRenderTarget | null = null;
+      new HDRLoader().load(
+        '/env/studio.hdr',
+        (hdr) => {
+          if (disposed) {
+            hdr.dispose();
+            return;
+          }
+          hdr.mapping = THREE.EquirectangularReflectionMapping;
+          hdrTarget = pmrem.fromEquirectangular(hdr);
+          hdr.dispose();
+          scene.environment = hdrTarget.texture;
+          scene.environmentIntensity = 1;
+        },
+        undefined,
+        () => {
+          // Keep RoomEnvironment if the HDRI is unavailable.
+        },
+      );
       const initialWidth = el.clientWidth || 600;
       const initialHeight = el.clientHeight || 560;
       const tracked = camera && product.category === 'fashion';
@@ -158,8 +188,31 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
       controls.maxPolarAngle = Math.PI * 0.85;
       if (!camera) controls.update();
       controls.saveState();
+      // Shared placement transform. Sliders, drag, pinch and twist all write
+      // here so the render loop has a single source of truth.
+      const manip = {
+        rotY: THREE.MathUtils.degToRad(current.current.rotation),
+        x: current.current.position / 100,
+        z: 0,
+        scale: 1,
+        offX: 0,
+        offY: 0,
+      };
+      let lastRotation = current.current.rotation;
+      let lastPosition = current.current.position;
       resetView.current = () => {
-        if (!camera) controls.reset();
+        if (!camera) {
+          controls.reset();
+          return;
+        }
+        manip.rotY = 0;
+        manip.x = 0;
+        manip.z = 0;
+        manip.scale = 1;
+        manip.offX = 0;
+        manip.offY = 0;
+        lastRotation = 0;
+        lastPosition = 0;
       };
       const productGroup = new THREE.Group();
       let assetReady = false;
@@ -195,7 +248,6 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
       hand.visible = false;
       let tick = 0;
       let previous = performance.now();
-      let disposed = false;
       let ready = false;
       const reduce = window.matchMedia(
         '(prefers-reduced-motion: reduce)',
@@ -285,20 +337,36 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
         previous = now;
         const s = current.current;
         if (s.playing && !reduce) tick += delta;
-        productGroup.rotation.y = THREE.MathUtils.degToRad(s.rotation);
-        productGroup.position.x = s.position / 100;
+        // Pick up slider / reset changes that arrived through props.
+        if (s.rotation !== lastRotation) {
+          manip.rotY = THREE.MathUtils.degToRad(s.rotation);
+          lastRotation = s.rotation;
+        }
+        if (s.position !== lastPosition) {
+          manip.x = s.position / 100;
+          lastPosition = s.position;
+        }
         hand.visible = product.category === 'gadgets' && s.ghost;
         const phase = (Math.sin(tick * 1.9) + 1) / 2;
         if (tracked) {
           const anchor = pose?.current;
           if (anchor?.visible) {
             productGroup.visible = true;
-            const scale = anchor.width / 0.57;
+            const scale = (anchor.width / 0.57) * manip.scale;
             productGroup.scale.setScalar(scale);
-            productGroup.position.set(anchor.x, anchor.y, 0);
+            // Manual drag nudges the garment on top of the pose anchor.
+            productGroup.position.set(
+              anchor.x + manip.offX,
+              anchor.y + manip.offY,
+              0,
+            );
             productGroup.rotation.z = anchor.angle;
             productGroup.rotation.y = 0;
           } else productGroup.visible = false;
+        } else {
+          productGroup.rotation.y = manip.rotY;
+          productGroup.position.set(manip.x, 0, manip.z);
+          productGroup.scale.setScalar(manip.scale);
         }
         if (product.category === 'gadgets' && assetReady) {
           const ear = productGroup.getObjectByName('right-ear');
@@ -324,6 +392,146 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
           onReady();
         }
       };
+      // --- Direct manipulation (camera AR): drag = move, pinch = scale,
+      //     twist = rotate; wheel = scale, shift/right-drag = rotate for mouse.
+      const clampN = (v: number, lo: number, hi: number) =>
+        Math.min(hi, Math.max(lo, v));
+      const raycaster = new THREE.Raycaster();
+      const dragPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+      const pointers = new Map<number, { x: number; y: number }>();
+      let drag: {
+        grabX: number;
+        grabZ: number;
+        startX: number;
+        startY: number;
+        baseOffX: number;
+        baseOffY: number;
+        baseRot: number;
+        rotate: boolean;
+      } | null = null;
+      let pinch: {
+        dist: number;
+        angle: number;
+        scale: number;
+        rotY: number;
+      } | null = null;
+      const planePoint = (clientX: number, clientY: number) => {
+        const rect = renderer.domElement.getBoundingClientRect();
+        raycaster.setFromCamera(
+          new THREE.Vector2(
+            ((clientX - rect.left) / rect.width) * 2 - 1,
+            -((clientY - rect.top) / rect.height) * 2 + 1,
+          ),
+          view,
+        );
+        dragPlane.constant = -ground.position.y;
+        const point = new THREE.Vector3();
+        return raycaster.ray.intersectPlane(dragPlane, point) ? point : null;
+      };
+      const gap = () => {
+        const [a, b] = [...pointers.values()];
+        return {
+          dist: Math.hypot(a.x - b.x, a.y - b.y),
+          angle: Math.atan2(b.y - a.y, b.x - a.x),
+        };
+      };
+      const startDrag = (clientX: number, clientY: number, rotate: boolean) => {
+        const hit = tracked ? null : planePoint(clientX, clientY);
+        drag = {
+          grabX: hit ? manip.x - hit.x : 0,
+          grabZ: hit ? manip.z - hit.z : 0,
+          startX: clientX,
+          startY: clientY,
+          baseOffX: manip.offX,
+          baseOffY: manip.offY,
+          baseRot: manip.rotY,
+          rotate,
+        };
+      };
+      const pushSliders = () => {
+        const rotation = Math.round(THREE.MathUtils.radToDeg(manip.rotY));
+        const position = Math.round(clampN(manip.x * 100, -80, 80));
+        lastRotation = rotation;
+        lastPosition = position;
+        manipulate.current?.({ rotation, position });
+      };
+      const onPointerDown = (e: PointerEvent) => {
+        renderer.domElement.setPointerCapture?.(e.pointerId);
+        pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (pointers.size === 2) {
+          const g = gap();
+          pinch = {
+            dist: g.dist,
+            angle: g.angle,
+            scale: manip.scale,
+            rotY: manip.rotY,
+          };
+          drag = null;
+        } else if (pointers.size === 1) {
+          startDrag(
+            e.clientX,
+            e.clientY,
+            e.pointerType === 'mouse' && (e.shiftKey || e.button === 2),
+          );
+        }
+      };
+      const onPointerMove = (e: PointerEvent) => {
+        if (!pointers.has(e.pointerId)) return;
+        pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (pinch && pointers.size >= 2) {
+          const g = gap();
+          manip.scale = clampN(
+            pinch.scale * (g.dist / (pinch.dist || 1)),
+            0.4,
+            2.6,
+          );
+          if (!tracked) manip.rotY = pinch.rotY + (g.angle - pinch.angle);
+          return;
+        }
+        if (!drag) return;
+        if (tracked) {
+          manip.offX = drag.baseOffX + (e.clientX - drag.startX);
+          manip.offY = drag.baseOffY - (e.clientY - drag.startY);
+        } else if (drag.rotate) {
+          manip.rotY = drag.baseRot + (e.clientX - drag.startX) * 0.01;
+        } else {
+          const hit = planePoint(e.clientX, e.clientY);
+          if (hit) {
+            // Keep x within the "move" slider's range so the two stay in sync;
+            // z (depth) is the extra freedom drag adds beyond the sliders.
+            manip.x = clampN(hit.x + drag.grabX, -0.8, 0.8);
+            manip.z = clampN(hit.z + drag.grabZ, -1.6, 1.2);
+          }
+        }
+      };
+      const endPointer = (e: PointerEvent) => {
+        if (!pointers.delete(e.pointerId)) return;
+        if (pointers.size < 2) pinch = null;
+        if (pointers.size === 0) {
+          if (drag) {
+            drag = null;
+            pushSliders();
+          }
+        } else if (pointers.size === 1) {
+          const p = [...pointers.values()][0];
+          startDrag(p.x, p.y, false);
+        }
+      };
+      const onWheel = (e: WheelEvent) => {
+        e.preventDefault();
+        manip.scale = clampN(manip.scale * (1 - e.deltaY * 0.001), 0.4, 2.6);
+      };
+      const onContextMenu = (e: Event) => e.preventDefault();
+      if (camera) {
+        const dom = renderer.domElement;
+        dom.style.touchAction = 'none';
+        dom.addEventListener('pointerdown', onPointerDown);
+        dom.addEventListener('pointermove', onPointerMove);
+        dom.addEventListener('pointerup', endPointer);
+        dom.addEventListener('pointercancel', endPointer);
+        dom.addEventListener('wheel', onWheel, { passive: false });
+        dom.addEventListener('contextmenu', onContextMenu);
+      }
       const contextLost = (event: Event) => {
         event.preventDefault();
         onError();
@@ -333,10 +541,21 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
       return () => {
         disposed = true;
         renderer.setAnimationLoop(null);
+        if (camera) {
+          const dom = renderer.domElement;
+          dom.removeEventListener('pointerdown', onPointerDown);
+          dom.removeEventListener('pointermove', onPointerMove);
+          dom.removeEventListener('pointerup', endPointer);
+          dom.removeEventListener('pointercancel', endPointer);
+          dom.removeEventListener('wheel', onWheel);
+          dom.removeEventListener('contextmenu', onContextMenu);
+        }
         observer.disconnect();
         controls.dispose();
         disposeObject(scene);
-        environmentMap.dispose();
+        roomMap.dispose();
+        hdrTarget?.dispose();
+        pmrem.dispose();
         renderer.dispose();
         renderer.domElement.removeEventListener(
           'webglcontextlost',

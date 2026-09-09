@@ -18,24 +18,37 @@ function fabric(color: string) {
   const canvas = document.createElement('canvas');
   canvas.width = canvas.height = 512;
   const c = canvas.getContext('2d')!;
-  c.fillStyle = '#888';
-  c.fillRect(0, 0, 512, 512);
+  // A finer, woven-looking weave: alternating warp/weft threads plus fine noise.
+  // Written straight into an ImageData buffer to stay off the main thread hot path.
+  const image = c.createImageData(512, 512);
+  const data = image.data;
   let seed = 19;
-  for (let y = 0; y < 512; y += 2)
-    for (let x = 0; x < 512; x += 2) {
+  let i = 0;
+  for (let y = 0; y < 512; y++)
+    for (let x = 0; x < 512; x++) {
       seed = (seed * 16807) % 2147483647;
-      const v = 90 + (seed % 65) + ((x + y) % 8 < 4 ? 32 : 0);
-      c.fillStyle = `rgb(${v},${v},${v})`;
-      c.fillRect(x, y, 1, 2);
+      const weave = ((x % 4 < 2 ? 1 : 0) ^ (y % 4 < 2 ? 1 : 0)) ? 26 : 0;
+      const v = 96 + (seed % 40) + weave;
+      data[i++] = v;
+      data[i++] = v;
+      data[i++] = v;
+      data[i++] = 255;
     }
+  c.putImageData(image, 0, 0);
   const map = new THREE.CanvasTexture(canvas);
   map.wrapS = map.wrapT = THREE.RepeatWrapping;
-  map.repeat.set(5, 3);
-  return new THREE.MeshStandardMaterial({
+  map.repeat.set(6, 4);
+  map.anisotropy = 8;
+  // Physical sheen gives cloth its soft grazing highlight under the studio HDRI.
+  return new THREE.MeshPhysicalMaterial({
     color,
-    roughness: 0.92,
+    roughness: 0.9,
+    metalness: 0,
     bumpMap: map,
-    bumpScale: 0.002,
+    bumpScale: 0.0026,
+    sheen: 0.6,
+    sheenColor: new THREE.Color(color).lerp(new THREE.Color('#efe6d7'), 0.4),
+    sheenRoughness: 0.85,
   });
 }
 export function makeProduct(p: Product, color: string) {
@@ -143,14 +156,18 @@ export function makeProduct(p: Product, color: string) {
         0,
       ),
     );
-    const shadeMat = new THREE.MeshStandardMaterial({
+    const shadeMat = new THREE.MeshPhysicalMaterial({
       bumpMap: cloth.bumpMap,
-      bumpScale: 0.001,
+      bumpScale: 0.0016,
       color: surface,
-      roughness: 0.88,
+      roughness: 0.85,
+      metalness: 0,
+      sheen: 0.7,
+      sheenColor: new THREE.Color(surface).lerp(new THREE.Color('#fff1d6'), 0.5),
+      sheenRoughness: 0.8,
       side: THREE.DoubleSide,
-      emissive: '#cfad77',
-      emissiveIntensity: 0.18,
+      emissive: '#e7c489',
+      emissiveIntensity: 0.22,
     });
     group.add(
       mesh(
@@ -307,10 +324,10 @@ export function makeProduct(p: Product, color: string) {
     }
   } else {
     group.add(
-      mesh(new THREE.CylinderGeometry(0.1, 0.11, 0.23, 48), cloth, 0, 0.115, 0),
+      mesh(new THREE.CylinderGeometry(0.1, 0.11, 0.23, 96), cloth, 0, 0.115, 0),
     );
     group.add(
-      mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.012, 48), dark, 0, 0.235, 0),
+      mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.012, 96), dark, 0, 0.235, 0),
     );
     for (const x of [-0.032, 0.032]) {
       group.add(

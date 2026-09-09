@@ -4,27 +4,43 @@ function textile(color: string, shirt: boolean) {
   const canvas = document.createElement('canvas');
   canvas.width = canvas.height = 512;
   const ctx = canvas.getContext('2d')!;
-  ctx.fillStyle = '#888';
-  ctx.fillRect(0, 0, 512, 512);
+  // Fine per-pixel weave: a tight twill for shirting, a denser slub for wool.
+  // Filled via ImageData (one pass, no per-pixel string parse).
+  const image = ctx.createImageData(512, 512);
+  const data = image.data;
   let seed = 127;
-  for (let y = 0; y < 512; y += 2)
-    for (let x = 0; x < 512; x += 2) {
+  let i = 0;
+  const cell = shirt ? 3 : 5;
+  const weaveHi = shirt ? 12 : 20;
+  const range = shirt ? 40 : 70;
+  for (let y = 0; y < 512; y++)
+    for (let x = 0; x < 512; x++) {
       seed = (seed * 16807) % 2147483647;
-      const v = 95 + (seed % 85) + ((x + y) % 8 < 4 ? 15 : 0);
-      ctx.fillStyle = `rgb(${v},${v},${v})`;
-      ctx.fillRect(x, y, shirt ? 1 : 2, 2);
+      const weave =
+        ((Math.floor(x / cell) % 2 < 1 ? 1 : 0) ^
+        (Math.floor(y / cell) % 2 < 1 ? 1 : 0))
+          ? weaveHi
+          : 0;
+      const v = 100 + (seed % range) + weave;
+      data[i++] = v;
+      data[i++] = v;
+      data[i++] = v;
+      data[i++] = 255;
     }
+  ctx.putImageData(image, 0, 0);
   const bumpMap = new THREE.CanvasTexture(canvas);
   bumpMap.wrapS = bumpMap.wrapT = THREE.RepeatWrapping;
   bumpMap.repeat.set(3, 3);
+  bumpMap.anisotropy = 8;
   return new THREE.MeshPhysicalMaterial({
     color,
-    roughness: shirt ? 0.78 : 0.96,
+    roughness: shirt ? 0.76 : 0.95,
+    metalness: 0,
     bumpMap,
-    bumpScale: shirt ? 0.0006 : 0.0014,
-    sheen: shirt ? 0.1 : 0.45,
+    bumpScale: shirt ? 0.0007 : 0.0018,
+    sheen: shirt ? 0.14 : 0.5,
     sheenColor: new THREE.Color(color).lerp(new THREE.Color('#eee6d7'), 0.35),
-    sheenRoughness: 0.85,
+    sheenRoughness: 0.8,
     side: THREE.DoubleSide,
   });
 }

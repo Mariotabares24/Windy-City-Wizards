@@ -25,6 +25,8 @@
   "ignorePatterns": [
     ".next/**",
     ".vinext/**",
+    ".claude/**",
+    ".agents/**",
     "out/**",
     "build/**",
     "dist/**",

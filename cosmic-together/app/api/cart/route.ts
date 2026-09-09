@@ -28,7 +28,7 @@ const schema = z.discriminatedUnion('action', [
 export async function GET() {
   try {
     const owner = await identity();
-    const db = database();
+    const db = await database();
     const rows = await db.batch([
       db
         .prepare(
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     const owner = await identity();
     await protect(req, owner);
     const b = schema.parse(await parseBody(req));
-    const db = database();
+    const db = await database();
     const versionUpdate = db
       .prepare(
         'INSERT INTO cart_versions (owner,version) VALUES (?,1) ON CONFLICT(owner) DO UPDATE SET version=version+1',

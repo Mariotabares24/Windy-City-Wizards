@@ -54,7 +54,7 @@ export async function GET(_req: Request, ctx: Context) {
     if (m?.removed)
       throw new ApiError('You no longer have access to this circle.', 403);
     if (!m) return json({ invitation: true, id, goal: c.goal });
-    await database()
+    await (await database())
       .prepare('UPDATE members SET last_seen=? WHERE id=? AND last_seen < ?')
       .bind(Date.now(), m.id, Date.now() - 10000)
       .run();
@@ -70,7 +70,7 @@ export async function POST(req: Request, ctx: Context) {
     await protect(req, owner);
     const c = await findCircle(id);
     const b = schema.parse(await parseBody(req));
-    const db = database();
+    const db = await database();
     const m = await findMember(id, owner);
     if (m?.removed)
       throw new ApiError('You no longer have access to this circle.', 403);

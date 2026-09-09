@@ -75,14 +75,18 @@ export async function loadProduct(p: Product, color: string) {
     const materials = Array.isArray(o.material) ? o.material : [o.material];
     for (const m of materials) {
       if (!(m instanceof THREE.MeshStandardMaterial)) continue;
+      // Recolor the velvet seat/back so the Ivory / Charcoal / Forest swatches
+      // visibly change the chair. The SheenChair ships two "fabric …" velvets.
       if (p.model === 'chair' && /fabric/i.test(m.name)) {
         m.color.set(tint);
         m.metalness = 0;
+        m.roughness = 0.62;
         if (m instanceof THREE.MeshPhysicalMaterial) {
-          m.sheen = 0.75;
-          m.sheenColor.set(tint);
-          m.sheenRoughness = 0.8;
+          m.sheen = 1;
+          m.sheenColor.set(tint).lerp(new THREE.Color('#fff8ef'), 0.4);
+          m.sheenRoughness = 0.75;
         }
+        m.needsUpdate = true;
       }
       // Preserve dark cushions and metal details in the authored texture.
       if (p.model === 'headphones' && color !== p.color)

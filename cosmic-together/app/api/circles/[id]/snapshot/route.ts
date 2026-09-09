@@ -30,7 +30,7 @@ export async function POST(req: Request, ctx: Context) {
     const header = new Uint8Array(bytes);
     if (header[0] !== 255 || header[1] !== 216 || header[2] !== 255)
       throw new ApiError('Invalid JPEG image.');
-    const db = database();
+    const db = await database();
     const count = await db
       .prepare(
         "SELECT COUNT(*) AS n FROM messages WHERE circle_id=? AND type='snapshot'",
@@ -72,7 +72,7 @@ export async function GET(req: Request, ctx: Context) {
     const mid = new URL(req.url).searchParams.get('message');
     if (!mid || !/^[a-f0-9-]{36}$/.test(mid))
       throw new ApiError('Snapshot not found.', 404);
-    const row = await database()
+    const row = await (await database())
       .prepare(
         "SELECT id FROM messages WHERE id=? AND circle_id=? AND type='snapshot'",
       )

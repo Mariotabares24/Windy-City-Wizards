@@ -33,6 +33,11 @@ work/
 .dev.vars
 .dev.vars.*
 
+# ---- Claude Code / ECC tooling (not part of the app) ----
+.claude/
+.agents/
+skills-lock.json
+
 # ---- editor / OS ----
 .DS_Store
 Thumbs.db

@@ -46,9 +46,15 @@ export default defineConfig(async () => {
 
   return {
     css: { postcss: { plugins: [tailwindcss()] } },
-    server: isCodexSeatbeltSandbox
-      ? { watch: { useFsEvents: false, usePolling: true } }
-      : undefined,
+    server: {
+      // Listen on all interfaces so other devices on the same Wi-Fi/hotspot can
+      // reach the invite flow via the host's LAN IP. Local dev only.
+      host: true,
+      allowedHosts: ['.trycloudflare.com'],
+      ...(isCodexSeatbeltSandbox
+        ? { watch: { useFsEvents: false, usePolling: true } }
+        : {}),
+    },
     plugins: [
       vinext(),
       sites(),

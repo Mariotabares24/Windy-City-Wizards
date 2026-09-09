@@ -340,7 +340,7 @@ function create(rows: Row[], category: Category, prefix: string): Product[] {
           : model === 'lamp'
             ? '/images/lamp.jpg'
             : model === 'chair'
-              ? '/images/home.jpg'
+              ? '/images/chair.jpg'
               : model === 'speaker'
                 ? '/images/speaker.jpg'
                 : '/images/gadgets.jpg',

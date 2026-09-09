@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Manrope, Instrument_Serif } from 'next/font/google';
 import './globals.css';
+import { AgentBubble } from '@/components/agent-bubble';
 
 const geistSans = Manrope({
   variable: '--font-geist-sans',
@@ -31,6 +32,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <AgentBubble />
       </body>
     </html>
   );
