@@ -1,0 +1,22 @@
+{
+  "p001": { "inStock": true,  "quantity": 42, "sizes": [] },
+  "p002": { "inStock": true,  "quantity": 95, "sizes": [] },
+  "p003": { "inStock": true,  "quantity": 18, "sizes": [] },
+  "p004": { "inStock": true,  "quantity": 63, "sizes": [] },
+  "p005": { "inStock": true,  "quantity": 27, "sizes": [] },
+  "p006": { "inStock": true,  "quantity": 14, "sizes": [] },
+  "p007": { "inStock": true,  "quantity": 210,"sizes": [] },
+  "p008": { "inStock": true,  "quantity": 33, "sizes": [] },
+  "p009": { "inStock": true,  "quantity": 88, "sizes": [] },
+  "p010": { "inStock": true,  "quantity": 22, "sizes": [] },
+  "p011": { "inStock": true,  "quantity": 31, "sizes": [] },
+  "p012": { "inStock": true,  "quantity": 19, "sizes": [] },
+  "p013": { "inStock": false, "quantity": 0,  "sizes": [], "restockEta": "2 weeks" },
+  "p014": { "inStock": true,  "quantity": 74, "sizes": [] },
+  "p015": { "inStock": true,  "quantity": 56, "sizes": [] },
+  "p016": { "inStock": true,  "quantity": 12, "sizes": [] },
+  "p017": { "inStock": true,  "quantity": 140,"sizes": [] },
+  "p018": { "inStock": true,  "quantity": 17, "sizes": [] },
+  "p019": { "inStock": true,  "quantity": 38, "sizes": [] },
+  "p020": { "inStock": true,  "quantity": 200,"sizes": [] }
+}

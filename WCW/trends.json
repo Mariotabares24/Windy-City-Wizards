@@ -1,0 +1,32 @@
+{
+  "season": "Summer 2026",
+  "global": [
+    "quiet luxury", "linen everything", "ballet flats revival",
+    "sheer layers", "coastal grandmother", "dopamine dressing",
+    "monochrome sets", "oversized blazers"
+  ],
+  "byOccasion": {
+    "wedding": ["floral midi", "pastel sets", "satin slip", "lace detail"],
+    "office": ["power suiting", "loafers", "minimal accessories", "trench coat"],
+    "casual": ["denim on denim", "cargo pants", "oversized tees", "platform sneakers"],
+    "date": ["cut-out details", "sheer tops", "statement earrings", "heeled boots"],
+    "brunch": ["linen sets", "woven bags", "espadrilles", "printed scarves"],
+    "cocktail": ["sequin details", "structured mini", "block heels", "bold lip"]
+  },
+  "byStyle": {
+    "minimalist": ["clean lines", "neutral palette", "structured silhouettes", "quality basics"],
+    "bohemian": ["flowy fabrics", "earth tones", "embroidery", "layered jewelry"],
+    "classic": ["timeless cuts", "navy and white", "pearl accessories", "loafers"],
+    "edgy": ["leather accents", "asymmetric cuts", "hardware details", "bold prints"],
+    "romantic": ["ruffles", "floral prints", "pastel hues", "delicate lace"],
+    "sporty": ["athleisure", "color blocking", "sneakers", "functional pockets"]
+  },
+  "trendScore": {
+    "linen": 94,
+    "blazer": 88,
+    "midi": 91,
+    "slip": 85,
+    "cashmere": 79,
+    "wide-leg": 87
+  }
+}
