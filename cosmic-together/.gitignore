@@ -38,3 +38,6 @@ next-env.d.ts
 /work/
 *.tsbuildinfo
 /public/tracking/wasm/*.map
+
+# vite dep cache
+/.vite/
