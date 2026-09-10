@@ -2,7 +2,7 @@ import { eraseCircle } from '@/lib/retention';
 import { z } from 'zod';
 import { circleConstraintsSchema } from '@/lib/contracts';
 import { database } from '@/db';
-import { availableProduct } from '@/lib/catalog';
+import { availableProduct, type Product } from '@/lib/catalog';
 import { safeShoppingText } from '@/lib/agents';
 import {
   identity,
@@ -13,7 +13,14 @@ import {
   uid,
   ApiError,
 } from '@/lib/server';
-import { findCircle, findMember, state, systemMessage } from '@/lib/circles';
+import {
+  findCircle,
+  findMember,
+  state,
+  systemMessage,
+  voteCounts,
+} from '@/lib/circles';
+import { circleReply } from '@/lib/cosmo/circle';
 const schema = z.discriminatedUnion('action', [
   z.object({
     action: z.literal('join'),
@@ -116,27 +123,18 @@ export async function POST(req: Request, ctx: Context) {
       if (/@cosmo/i.test(b.text)) {
         const ps = (JSON.parse(c.products) as string[])
           .map(availableProduct)
-          .filter(Boolean);
-        let answer =
-          'Vote for a favorite, then ask your host to refine the shortlist. Your budget always comes first.';
-        if (/cheap|budget|price/i.test(b.text)) {
-          const cheapest = ps.sort((a, b) => a!.price - b!.price)[0];
-          answer = cheapest
-            ? `${cheapest.name} is the lowest-priced choice here at $${cheapest.price}. Prices are from our sample catalog.`
-            : answer;
-        } else if (/compare|difference/i.test(b.text)) {
-          answer =
-            ps
-              .map(
-                (p) =>
-                  `${p!.name}: $${p!.price}, ${p!.material.toLowerCase()}.`,
-              )
-              .join(' ') ||
-            'These items are no longer available. Ask your host to update the shortlist.';
-        } else if (/try|visual|ar/i.test(b.text))
-          answer =
-            'Open a product and choose “Try it in your world.” Camera access is optional and stays on your device.';
-        await systemMessage(id, answer);
+          .filter((p): p is Product => Boolean(p));
+        const votes = await voteCounts(id);
+        await systemMessage(
+          id,
+          circleReply(
+            b.text,
+            ps,
+            JSON.parse(c.constraints || '{}'),
+            votes,
+            c.goal,
+          ),
+        );
       }
     } else if (b.action === 'vote') {
       if (b.selected && !availableProduct(b.productId))

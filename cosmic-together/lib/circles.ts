@@ -49,6 +49,17 @@ export async function systemMessage(circleId: string, text: string) {
     .bind(uid(), circleId, 'Cosmo', text, 'system', Date.now())
     .run();
 }
+// Live vote tally for a circle, excluding removed members.
+export async function voteCounts(circleId: string) {
+  const db = await database();
+  const votes = await db
+    .prepare(
+      'SELECT v.product_id AS productId,COUNT(*) AS count FROM votes v JOIN members m ON m.id=v.member_id WHERE v.circle_id=? AND m.removed=0 GROUP BY v.product_id',
+    )
+    .bind(circleId)
+    .all<{ productId: string; count: number }>();
+  return Object.fromEntries(votes.results.map((v) => [v.productId, v.count]));
+}
 export async function state(c: CircleRow, member: MemberRow) {
   const db = await database();
   const [members, messages, votes, myVotes] = await Promise.all([
