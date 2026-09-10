@@ -3148,24 +3148,6 @@ h2,
   align-items: center;
   min-height: 100svh;
 }
-.scroll-hero-bg {
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 100svh;
-  z-index: 0;
-  will-change: opacity;
-}
-.scroll-hero-bg img {
-  width: 100vw;
-  height: 100svh;
-  object-fit: cover;
-  object-position: center 38%;
-}
-.scroll-hero-bg-scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, #0a0a1a66, #0a0a1acc);
-}
 .scroll-hero-viewport {
   position: relative;
   z-index: 1;
@@ -3246,9 +3228,9 @@ h2,
   font-weight: 500;
   letter-spacing: -0.04em;
   line-height: 1.04;
-  /* Space Grotesk sets ~34% wider than the serif this replaced; scaled down so
-     the long second line still fits on one line and the words slide apart cleanly. */
-  font-size: clamp(30px, 5.2vw, 82px);
+  /* Space Grotesk sets ~34% wider than the serif this replaced. Sized so the
+     long second line still clears the viewport once it slides out by --shift. */
+  font-size: clamp(28px, 4.8vw, 76px);
   text-wrap: balance;
   color: #eee8f7;
   text-shadow: 0 2px 40px #000a;
@@ -3711,8 +3693,5 @@ h2,
   }
   .scroll-hero-cue {
     animation: none;
-  }
-  .scroll-hero-bg {
-    display: none;
   }
 }

@@ -141,24 +141,16 @@ export function ScrollExpandMedia({
 
   const width = 320 + progress * (isMobile ? 560 : 1160);
   const height = 420 + progress * (isMobile ? 200 : 340);
-  const shift = progress * (isMobile ? 34 : 20);
+  // Slide distance is tuned to the title's rendered width: Space Grotesk is
+  // wider than the serif this was first set for, so the words need less travel
+  // to read as separated without the longer line leaving the viewport.
+  const shift = progress * (isMobile ? 24 : 15);
   const firstWord = title ? title.split(' ')[0] : '';
   const restTitle = title ? title.split(' ').slice(1).join(' ') : '';
 
   return (
     <div className="scroll-hero">
       <section className="scroll-hero-stage">
-        <motion.div
-          className="scroll-hero-bg"
-          initial={false}
-          animate={{ opacity: reduce ? 0.18 : 1 - progress * 0.9 }}
-          transition={{ duration: 0.1 }}
-          aria-hidden="true"
-        >
-          <Photo src={src} alt="" width={1920} height={1080} fetchPriority="high" />
-          <div className="scroll-hero-bg-scrim" />
-        </motion.div>
-
         <div className="scroll-hero-viewport">
           <div
             className="scroll-hero-frame"
@@ -170,6 +162,8 @@ export function ScrollExpandMedia({
               alt={alt}
               width={1280}
               height={720}
+              loading="eager"
+              fetchPriority="high"
             />
             <motion.div
               className="scroll-hero-scrim"
