@@ -118,7 +118,7 @@ export function Shop({ demo = false }: { demo?: boolean }) {
           new Promise((r) => setTimeout(r, 1500)),
         ]);
       } catch {
-        data = orchestrate(request);
+        data = await orchestrate(request);
         setError(
           'Connection interrupted. Your shortlist is available from the on-device sample catalog.',
         );
@@ -205,12 +205,14 @@ export function Shop({ demo = false }: { demo?: boolean }) {
     else if (selected.length < 3) setSelected([...selected, id]);
     else setError('Compare up to three products at a time.');
   }
+  // Mirrors the agents Cosmo actually fans out to, so the progress list names
+  // the real work rather than generic phases.
   const steps = [
-    'Understanding your occasion',
-    'Matching your preferences',
-    'Comparing the collection',
-    'Checking sample availability',
-    'Bringing it all together',
+    'Recommendation agent',
+    'Trend agent',
+    'Localization agent',
+    'Stylist agent',
+    'Stock & budget checks',
   ];
   return (
     <>
@@ -372,12 +374,22 @@ export function Shop({ demo = false }: { demo?: boolean }) {
                   </button>
                   {showEvidence && (
                     <ol className="evidence-list">
-                      {result.steps.map((s) => (
-                        <li key={s.agent}>
-                          <strong>{s.agent}</strong>
-                          <span>{s.evidence}</span>
-                        </li>
-                      ))}
+                      {result.steps.map((s) => {
+                        const timing = result.timings?.find(
+                          (t) => t.label === s.label,
+                        );
+                        return (
+                          <li key={s.agent}>
+                            <strong>
+                              {s.agent}
+                              {timing ? (
+                                <em className="agent-timing">{timing.ms}ms</em>
+                              ) : null}
+                            </strong>
+                            <span>{s.evidence}</span>
+                          </li>
+                        );
+                      })}
                     </ol>
                   )}
                 </div>

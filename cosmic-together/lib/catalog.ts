@@ -390,18 +390,72 @@ const legacyCatalog: Product[] = [
   ...create(gadgets, 'gadgets', 'g'),
 ];
 const activeIds = new Set(['f01', 'f04', 'f11', 'h01', 'h04', 'g01', 'g04']);
-export const products: Product[] = legacyCatalog
-  .filter((p) => activeIds.has(p.id))
-  .map((p) => ({
-    ...p,
-    ar: true,
-    ...(p.id === 'h04'
+
+// Cosmo catalog. Merged in from the cosmos-agent branch, remapped onto this
+// Product shape: local imagery instead of remote URLs, and lifestyle folded
+// into home since the storefront only browses fashion / home / gadgets.
+// `ar` is false where no faithful 3D model exists, so the UI offers a flat
+// preview rather than promising a try-on it cannot render.
+type CosmoRow = {
+  id: string;
+  kind: string;
+  name: string;
+  category: Category;
+  price: number;
+  color: string;
+  colors: string[];
+  material: string;
+  description: string;
+  tags: string[];
+  stock: number;
+  formality: string;
+  model: Product['model'];
+  ar: boolean;
+  image: string;
+};
+const cosmoRows: CosmoRow[] = [
+  { id: 'c-f01', kind: 'wrap dress', name: 'Linen Wrap Dress', category: 'fashion', price: 145, color: 'Blue', colors: ['Blue', 'Sage', 'Blush', 'Ivory'], material: 'European linen', description: 'An easy wrap silhouette in breathable linen, cut for warm-weather celebrations.', tags: ['dress', 'blue', 'wedding', 'summer', 'wrap', 'brunch'], stock: 24, formality: 'semi-formal', model: 'garment', ar: true, image: '/images/fashion.jpg' },
+  { id: 'c-f02', kind: 'midi dress', name: 'Sapphire Midi Dress', category: 'fashion', price: 218, color: 'Cobalt', colors: ['Cobalt', 'Navy', 'Midnight'], material: 'Italian crepe', description: 'A structured bodice and midi length for evenings that call for a sharper line.', tags: ['dress', 'blue', 'cobalt', 'navy', 'wedding', 'cocktail'], stock: 12, formality: 'formal', model: 'garment', ar: true, image: '/images/fashion.jpg' },
+  { id: 'c-f03', kind: 'slip dress', name: 'Cobalt Silk Slip Dress', category: 'fashion', price: 89, color: 'Cobalt', colors: ['Cobalt', 'Blue', 'Dusty blue'], material: 'Silk satin', description: 'Bias-cut silk that moves easily, dressed up or down by what you layer over it.', tags: ['dress', 'blue', 'cobalt', 'date', 'brunch', 'silk'], stock: 18, formality: 'casual', model: 'garment', ar: true, image: '/images/fashion.jpg' },
+  { id: 'c-f04', kind: 'blazer dress', name: 'Navy Blazer Dress', category: 'fashion', price: 195, color: 'Navy', colors: ['Navy', 'Blue', 'French blue'], material: 'Italian wool blend', description: 'A button-front blazer dress with a belt, tailored for the office and after.', tags: ['dress', 'blue', 'navy', 'office', 'structured', 'work'], stock: 9, formality: 'formal', model: 'garment', ar: true, image: '/images/blazer-black.jpg' },
+  { id: 'c-f05', kind: 'maxi dress', name: 'Powder Blue Maxi Dress', category: 'fashion', price: 79, color: 'Powder blue', colors: ['Powder blue', 'Sky blue', 'Blue'], material: 'Cotton voile', description: 'A soft, full-length cotton dress made for slow, hot afternoons.', tags: ['dress', 'blue', 'casual', 'vacation', 'summer', 'maxi'], stock: 0, formality: 'casual', model: 'garment', ar: true, image: '/images/fashion.jpg' },
+  { id: 'c-f06', kind: 'tailored blazer', name: 'Tailored Blazer', category: 'fashion', price: 210, color: 'Black', colors: ['Black', 'Camel', 'Navy'], material: 'Wool blend', description: 'A clean-shouldered blazer that anchors both suiting and denim.', tags: ['blazer', 'jacket', 'office', 'cocktail', 'structured', 'work'], stock: 15, formality: 'formal', model: 'garment', ar: true, image: '/images/blazer-grey.jpg' },
+  { id: 'c-f07', kind: 'midi skirt', name: 'Silk Midi Skirt', category: 'fashion', price: 89, color: 'Burgundy', colors: ['Burgundy', 'Gold', 'Dusty rose'], material: 'Silk', description: 'A fluid midi skirt with enough weight to hold its shape as you move.', tags: ['skirt', 'date', 'brunch', 'elegant', 'midi', 'silk'], stock: 22, formality: 'semi-formal', model: 'garment', ar: true, image: '/images/fashion.jpg' },
+  { id: 'c-f08', kind: 'knitwear', name: 'Cashmere Crew Neck', category: 'fashion', price: 175, color: 'Camel', colors: ['Camel', 'Ivory', 'Stone', 'Midnight'], material: 'Cashmere', description: 'A everyday crew neck in cashmere, warm without the bulk.', tags: ['knitwear', 'sweater', 'jumper', 'casual', 'office', 'autumn'], stock: 31, formality: 'casual', model: 'garment', ar: true, image: '/images/shirt.jpg' },
+  { id: 'c-h01', kind: 'bedding', name: 'Linen Duvet Cover Set', category: 'home', price: 189, color: 'Oatmeal', colors: ['Oatmeal', 'White', 'Sage', 'Stone'], material: 'Washed linen', description: 'Stonewashed linen bedding that softens with every wash.', tags: ['bedding', 'duvet', 'bedroom', 'linen', 'sleep'], stock: 45, formality: 'everyday', model: 'lamp', ar: false, image: '/images/home.jpg' },
+  { id: 'c-h02', kind: 'accent chair', name: 'Bouclé Accent Chair', category: 'home', price: 649, color: 'Ivory', colors: ['Ivory', 'Cream'], material: 'Bouclé & oak', description: 'A rounded bouclé shell on oak legs — a corner chair you actually sit in.', tags: ['furniture', 'chair', 'living room', 'statement'], stock: 8, formality: 'everyday', model: 'chair', ar: true, image: '/images/chair.jpg' },
+  { id: 'c-h03', kind: 'vase set', name: 'Ceramic Vase Set', category: 'home', price: 79, color: 'Sage', colors: ['Sage', 'Terracotta', 'Off-white'], material: 'Glazed ceramic', description: 'Three hand-glazed vases in graduated heights, made to be grouped.', tags: ['decor', 'vase', 'living room', 'minimal', 'ceramic'], stock: 33, formality: 'everyday', model: 'lamp', ar: false, image: '/images/home.jpg' },
+  { id: 'c-h04', kind: 'candle', name: 'Ylang & Sandalwood Candle', category: 'home', price: 68, color: 'Amber', colors: ['Amber', 'Ivory'], material: 'Soy wax blend', description: 'A warm, resinous burn with ylang on top — 60 hours in a reusable vessel.', tags: ['candle', 'fragrance', 'gift', 'relaxation', 'wellness'], stock: 60, formality: 'everyday', model: 'lamp', ar: false, image: '/images/home.jpg' },
+  { id: 'c-h05', kind: 'yoga mat', name: 'Cork Yoga Mat', category: 'home', price: 98, color: 'Natural cork', colors: ['Natural cork', 'Charcoal'], material: 'Cork & natural rubber', description: 'A cork surface that grips better as you sweat, on a recycled rubber base.', tags: ['yoga', 'wellness', 'fitness', 'sustainable', 'gift'], stock: 27, formality: 'everyday', model: 'lamp', ar: false, image: '/images/home.jpg' },
+];
+const cosmoCatalog: Product[] = cosmoRows.map((r) => {
+  const specs: Record<string, string> =
+    r.category === 'fashion'
       ? {
-          material: 'Velvet & wood',
-          specs: { ...p.specs, Material: 'Velvet & wood' },
+          Material: r.material,
+          Formality: r.formality,
+          Fit: 'Regular / relaxed',
+          Care: 'Follow garment care label',
+          Sizes: 'XS, S, M, L, XL',
         }
-      : {}),
-  }));
+      : { Material: r.material, Care: 'Wipe clean' };
+  return { ...r, specs };
+});
+export const products: Product[] = [
+  ...legacyCatalog
+    .filter((p) => activeIds.has(p.id))
+    .map((p) => ({
+      ...p,
+      ar: true,
+      ...(p.id === 'h04'
+        ? {
+            material: 'Velvet & wood',
+            specs: { ...p.specs, Material: 'Velvet & wood' },
+          }
+        : {}),
+    })),
+  ...cosmoCatalog,
+];
 const retiredProducts = legacyCatalog
   .filter((p) => !activeIds.has(p.id))
   .map((p) => ({ ...p, stock: 0, retired: true }));

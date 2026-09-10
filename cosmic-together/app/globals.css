@@ -1072,6 +1072,14 @@ select {
   background: currentColor;
   animation: pulse 1s infinite;
 }
+.agent-timing {
+  margin-left: 8px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: #06b6d4;
+}
 .collection-toolbar {
   display: flex;
   justify-content: space-between;
@@ -3481,6 +3489,39 @@ h2,
   color: #ffffff;
   display: grid;
   place-items: center;
+}
+.agent-progress {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+}
+.agent-progress li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #8b819d;
+  transition: color 0.2s ease;
+}
+.agent-progress li.active {
+  color: #c8bde0;
+}
+.agent-progress li.done {
+  color: #06b6d4;
+}
+.agent-progress-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+}
+.agent-progress li.active .agent-progress-dot {
+  opacity: 1;
+  animation: agent-blink 1s infinite ease-in-out;
 }
 .agent-typing {
   display: inline-flex;

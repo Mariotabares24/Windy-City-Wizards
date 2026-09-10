@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     const id = await identity();
     await protect(req, id);
     const body = await parseBody(req);
-    const result = orchestrate(body);
+    const result = await orchestrate(body);
     await event(id, 'recommendations_generated');
     return json(result);
   } catch (e) {

@@ -1,4 +1,5 @@
-import { products, type Product } from './catalog';
+import { type Product } from './catalog';
+import { cosmoOrchestrator } from './cosmo';
 import {
   requestSchema,
   resultSchema,
@@ -39,17 +40,18 @@ export function safeShoppingText(text: string) {
     text,
   );
 }
-function research(p: Product, intent: string) {
-  const terms = intent
-    .toLowerCase()
-    .split(/\W+/)
-    .filter((x) => x.length > 3);
-  const corpus = [p.name, p.description, p.material, ...p.tags]
-    .join(' ')
-    .toLowerCase();
-  return Math.min(12, terms.filter((t) => corpus.includes(t)).length * 3);
+function tradeoff(p: Product) {
+  if (p.category === 'fashion')
+    return p.material.includes('Wool')
+      ? 'Wool blend may feel warm indoors.'
+      : `A ${p.material.toLowerCase()} finish — check the care label before you commit.`;
+  if (p.category === 'home')
+    return p.ar
+      ? 'Room placement is an approximate visual preview.'
+      : 'No 3D preview for this one yet — photography only.';
+  return 'Battery figures are sample catalog specifications.';
 }
-export function orchestrate(input: unknown): ShoppingResult {
+export async function orchestrate(input: unknown): Promise<ShoppingResult> {
   const r = requestSchema.parse(input);
   const inferred = inferIntent(r.intent, r.category);
   const budget = r.budget ?? inferred.budget ?? 250;
@@ -65,94 +67,32 @@ export function orchestrate(input: unknown): ShoppingResult {
       constraints: { budget, category, formality },
       blocked: true,
     });
-  let candidates = products.filter(
-    (p) => p.category === category && p.price <= budget && p.stock > 0,
-  );
-  const lower = r.intent.toLowerCase();
-  const subtype =
-    category === 'home'
-      ? /lamp|light/.test(lower)
-        ? 'lamp'
-        : /chair|seat/.test(lower)
-          ? 'chair'
-          : null
-      : category === 'gadgets'
-        ? /headphone/.test(lower)
-          ? 'headphones'
-          : /speaker/.test(lower)
-            ? 'speaker'
-            : null
-        : null;
-  if (subtype) candidates = candidates.filter((p) => p.model === subtype);
-  if (category === 'fashion') {
-    const hasFormality = inferred.formality || r.formality;
-    if (hasFormality)
-      candidates = candidates.filter(
-        (p) =>
-          p.formality === formality ||
-          (formality === 'semi-formal' &&
-            p.kind === 'blazer' &&
-            p.formality === 'formal') ||
-          (formality === 'casual' && ['shirt', 'coat'].includes(p.kind)),
-      );
-    if (/shirt|oxford/.test(lower))
-      candidates = candidates.filter((p) => /shirt|oxford/i.test(p.name));
-    else if (/coat/.test(lower))
-      candidates = candidates.filter((p) => p.kind === 'coat');
-    else if (/blazer/.test(lower))
-      candidates = candidates.filter((p) => /blazer/i.test(p.name));
-  }
-  const ranked = candidates
-    .map((p) => {
-      const palette = r.colors.includes(p.color);
-      const social = r.votes[p.id] || 0;
-      const score = Math.min(
-        99,
-        68 +
-          research(p, r.intent) +
-          (palette ? 8 : 0) +
-          (r.style === 'explore' &&
-          !['Midnight', 'Charcoal', 'Black'].includes(p.color)
-            ? 6
-            : 0) +
-          Math.min(12, social * 4) +
-          (p.ar ? 3 : 0),
-      );
-      return {
-        productId: p.id,
-        score,
-        reasons: [
-          `Within your $${budget} budget`,
-          palette
-            ? 'Matches your selected palette'
-            : category === 'fashion'
-              ? `${p.formality} with ${p.material.toLowerCase()}`
-              : p.tags[0],
-          social
-            ? `${social} circle ${social === 1 ? 'vote' : 'votes'}`
-            : `${r.location}: sample availability`,
-        ],
-        tradeoffs: [
-          category === 'fashion'
-            ? p.material.includes('Wool')
-              ? 'Wool blend may feel warm indoors.'
-              : 'A more relaxed finish than a structured wool blazer.'
-            : category === 'home'
-              ? p.model === 'lamp'
-                ? 'Room placement is an approximate visual preview.'
-                : 'Check doorways and room dimensions before ordering.'
-              : 'Battery figures are sample catalog specifications.',
-        ],
-      };
-    })
-    .sort((a, b) => b.score - a.score || a.productId.localeCompare(b.productId))
-    .slice(0, 3);
+
+  const cosmo = await cosmoOrchestrator({
+    query: r.intent,
+    category,
+    budget,
+    formality,
+    style: r.style,
+    location: r.location,
+    colors: r.colors,
+    votes: r.votes,
+  });
+
+  const ranked = cosmo.recommendations.scored.map((s) => ({
+    productId: s.product.id,
+    score: s.score,
+    reasons: s.reasons,
+    tradeoffs: [tradeoff(s.product)],
+  }));
+
   const summary =
     ranked.length === 0
-      ? `No in-stock ${category === 'home' ? 'home' : category} matches meet all your constraints. Try a higher budget or a different style.`
+      ? `No in-stock ${category} matches meet all your constraints. Try a higher budget or a different style.`
       : ranked.length < 3
         ? `I found ${ranked.length} ${ranked.length === 1 ? 'match' : 'matches'} within your constraints. I kept your budget intact.`
         : `Three directions, one good decision. ${Object.keys(r.votes).length ? 'Your circle’s votes are reflected in the order.' : 'Each meets your budget, with a different feel.'}`;
+
   return resultSchema.parse({
     summary,
     recommendations: ranked,
@@ -165,29 +105,42 @@ export function orchestrate(input: unknown): ShoppingResult {
         evidence: `${category}; budget $${budget}${category === 'fashion' ? '; ' + formality : ''}`,
       },
       {
-        agent: 'Style & Context',
-        label: 'Matching your preferences',
-        evidence: r.colors.length
-          ? r.colors.join(', ')
-          : 'Using this session’s choices only',
-      },
-      {
-        agent: 'Product Research',
-        label: `Comparing ${products.filter((p) => p.category === category).length} products`,
-        evidence: `${candidates.length} satisfy your constraints`,
+        agent: 'Trends',
+        label: 'Reading the season',
+        evidence: cosmo.trends.trending.slice(0, 3).join(', ') || cosmo.trends.season,
       },
       {
         agent: 'Localization',
-        label: `Checking ${r.location} availability`,
-        evidence: 'Curated prototype inventory; not live stock',
+        label: 'Checking your region',
+        evidence: `${cosmo.localization.region}; ships in ${cosmo.localization.shippingEstimate}`,
       },
       {
-        agent: 'Social Consensus',
-        label: 'Bringing the shortlist together',
-        evidence: Object.keys(r.votes).length
-          ? 'Friend votes applied inside hard constraints'
-          : 'Ready for a second opinion',
+        agent: 'Product Research',
+        label: 'Searching the catalog',
+        evidence: cosmo.recommendations.rationale,
+      },
+      {
+        agent: 'Stylist',
+        label: 'Styling the shortlist',
+        evidence: cosmo.stylist.palette.join(', '),
       },
     ],
+    trends: {
+      season: cosmo.trends.season,
+      occasion: cosmo.trends.occasion,
+      trending: cosmo.trends.trending,
+      score: cosmo.trends.score,
+    },
+    localization: {
+      currency: cosmo.localization.currency,
+      symbol: cosmo.localization.symbol,
+      region: cosmo.localization.region,
+      shippingEstimate: cosmo.localization.shippingEstimate,
+    },
+    stylist: cosmo.stylist,
+    budgetCheck: cosmo.budget,
+    reviews: cosmo.reviews,
+    sizes: cosmo.sizes,
+    timings: cosmo.timings,
   });
 }

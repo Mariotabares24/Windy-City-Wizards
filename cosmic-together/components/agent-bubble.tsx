@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { ArrowUpRight, Box, Send, Sparkles, X } from 'lucide-react';
+import { ArrowUpRight, Box, Check, Send, Sparkles, X } from 'lucide-react';
 import { Photo } from './photo';
 import { Bubble, BubbleContent, BubbleGroup } from './ui/bubble';
 import { api } from '@/lib/client';
@@ -30,12 +30,21 @@ const greeting: Message = {
   text: 'Hi — I’m Cosmo. Tell me what you’re looking for and I’ll pull together a shortlist. Try “a warm floor lamp for my reading corner”.',
 };
 
+// The agents Cosmo fans out to, in the order the orchestrator reports them.
+const COSMO_AGENTS = [
+  'Recommendation',
+  'Trends',
+  'Localization',
+  'Stylist',
+  'Stock & budget',
+];
 export function AgentBubble() {
   const pathname = usePathname();
   const reduce = useReducedMotion();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [stage, setStage] = useState(0);
   const [messages, setMessages] = useState<Message[]>([greeting]);
   const panel = useRef<HTMLDialogElement>(null);
   const launcher = useRef<HTMLButtonElement>(null);
@@ -72,6 +81,11 @@ export function AgentBubble() {
     setInput('');
     setMessages((m) => [...m, { id: newId(), role: 'user', text }]);
     setLoading(true);
+    setStage(0);
+    const ticker = setInterval(
+      () => setStage((v) => Math.min(v + 1, COSMO_AGENTS.length - 1)),
+      280,
+    );
     const parsed = inferIntent(text);
     const request = {
       intent: text,
@@ -90,7 +104,7 @@ export function AgentBubble() {
       data = await api<ShoppingResult>('/api/concierge', request);
     } catch {
       // Mirror the shop's resilience: fall back to the on-device catalog agent.
-      data = orchestrate(request);
+      data = await orchestrate(request);
       offline = true;
     }
     setMessages((m) => [
@@ -103,6 +117,7 @@ export function AgentBubble() {
         offline,
       },
     ]);
+    clearInterval(ticker);
     setLoading(false);
   }
 
@@ -210,11 +225,21 @@ export function AgentBubble() {
                 <BubbleGroup>
                   <Bubble variant="muted" align="start">
                     <BubbleContent>
-                      <span className="agent-typing" aria-label="Thinking">
-                        <i />
-                        <i />
-                        <i />
-                      </span>
+                      <ul className="agent-progress" aria-label="Cosmo agents working">
+                        {COSMO_AGENTS.map((label, i) => (
+                          <li
+                            key={label}
+                            className={i < stage ? 'done' : i === stage ? 'active' : ''}
+                          >
+                            {i < stage ? (
+                              <Check size={12} />
+                            ) : (
+                              <span className="agent-progress-dot" />
+                            )}
+                            {label}
+                          </li>
+                        ))}
+                      </ul>
                     </BubbleContent>
                   </Bubble>
                 </BubbleGroup>

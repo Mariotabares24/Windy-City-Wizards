@@ -22,6 +22,31 @@ export const recommendationSchema = z.object({
   reasons: z.array(z.string()).min(1).max(4),
   tradeoffs: z.array(z.string()).max(3),
 });
+// Cosmo agent outputs. Optional because a blocked or malformed request is
+// answered before any agent runs.
+export const trendsSchema = z.object({
+  season: z.string(),
+  occasion: z.string(),
+  trending: z.array(z.string()),
+  score: z.number(),
+});
+export const localizationSchema = z.object({
+  currency: z.string(),
+  symbol: z.string(),
+  region: z.string(),
+  shippingEstimate: z.string(),
+});
+export const stylistSchema = z.object({
+  advice: z.string(),
+  outfitTips: z.array(z.string()),
+  palette: z.array(z.string()),
+});
+export const budgetSchema = z.object({
+  approved: z.boolean(),
+  message: z.string(),
+  savings: z.number().optional(),
+  bestValue: z.string().optional(),
+});
 export const resultSchema = z.object({
   summary: z.string(),
   recommendations: z.array(recommendationSchema).max(3),
@@ -35,6 +60,26 @@ export const resultSchema = z.object({
     formality: z.string(),
   }),
   blocked: z.boolean().optional(),
+  trends: trendsSchema.optional(),
+  localization: localizationSchema.optional(),
+  stylist: stylistSchema.optional(),
+  budgetCheck: budgetSchema.optional(),
+  reviews: z
+    .array(
+      z.object({
+        productId: z.string(),
+        rating: z.number(),
+        reviewCount: z.number(),
+        summary: z.string(),
+      }),
+    )
+    .optional(),
+  sizes: z
+    .array(z.object({ productId: z.string(), size: z.string() }))
+    .optional(),
+  timings: z
+    .array(z.object({ id: z.string(), label: z.string(), ms: z.number() }))
+    .optional(),
 });
 export type ShoppingResult = z.infer<typeof resultSchema>;
 export type Preferences = {
