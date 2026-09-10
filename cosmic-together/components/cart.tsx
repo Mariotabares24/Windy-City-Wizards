@@ -100,7 +100,7 @@ export function Cart() {
             <ShoppingBag size={38} />
             <h2>A little room for something good.</h2>
             <p>
-              Explore the collection or let your concierge find a few favorites.
+              Explore the collection or let Cosmo find a few favorites.
             </p>
             <a className="button primary" href="/shop">
               Find my next favorite <ArrowRight size={16} />

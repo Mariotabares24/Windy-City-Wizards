@@ -113,7 +113,7 @@ export async function POST(req: Request, ctx: Context) {
         )
         .bind(uid(), id, m.name, b.text, Date.now())
         .run();
-      if (/@cosmic/i.test(b.text)) {
+      if (/@cosmo/i.test(b.text)) {
         const ps = (JSON.parse(c.products) as string[])
           .map(availableProduct)
           .filter(Boolean);

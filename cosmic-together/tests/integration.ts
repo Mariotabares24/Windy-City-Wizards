@@ -137,18 +137,18 @@ assert.equal(state.votes[ids[1]], 1);
 pass('idempotent cross-session votes');
 await guest.request(path, {
   action: 'message',
-  text: 'I like the second option. @cosmic compare',
+  text: 'I like the second option. @cosmo compare',
 });
 state = await host.request(path);
 assert(
   state.messages.some(
-    (m: any) => m.text === 'I like the second option. @cosmic compare',
+    (m: any) => m.text === 'I like the second option. @cosmo compare',
   ),
 );
 assert(
-  state.messages.some((m: any) => m.name === 'Cosmic' && m.text.includes('$')),
+  state.messages.some((m: any) => m.name === 'Cosmo' && m.text.includes('$')),
 );
-pass('shared chat and contextual concierge');
+pass('shared chat and contextual Cosmo reply');
 await guest.request(path, { action: 'end' }, 'POST', 403);
 await outsider.request(
   path,

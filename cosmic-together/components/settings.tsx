@@ -46,7 +46,7 @@ export function Settings() {
         <div className="eyebrow">A LITTLE PERSONAL. ALWAYS YOURS.</div>
         <h1>Your comfort zone.</h1>
         <p className="muted">
-          Choose what Cosmic remembers and what stays just for this session.
+          Choose what Cosmo remembers and what stays just for this session.
         </p>
         <section className="settings-section">
           <h2>Make yourself at home.</h2>

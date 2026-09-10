@@ -46,7 +46,7 @@ export async function systemMessage(circleId: string, text: string) {
     .prepare(
       'INSERT INTO messages (id,circle_id,name,text,type,created_at) VALUES (?,?,?,?,?,?)',
     )
-    .bind(uid(), circleId, 'Cosmic', text, 'system', Date.now())
+    .bind(uid(), circleId, 'Cosmo', text, 'system', Date.now())
     .run();
 }
 export async function state(c: CircleRow, member: MemberRow) {

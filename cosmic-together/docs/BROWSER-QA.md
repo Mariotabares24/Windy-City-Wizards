@@ -37,7 +37,7 @@ On the local development build and the compiled production Worker:
 - Home rotation and placement sliders respond to keyboard input.
 - Expand enters fullscreen; Exit fullscreen restores the page.
 - Circle entry opens setup; creation displays an invitation link; adding the
-  labeled demo member, voting, and `@cosmic` chat visibly update the circle.
+  labeled demo member, voting, and `@cosmo` chat visibly update the circle.
 - Phone-size landing and preview layouts have no horizontal document overflow.
 - Server-rendered AR output has no aborted Suspense recovery boundary after the fix.
 

@@ -68,8 +68,8 @@ export function Landing() {
                 <em>Better chosen.</em>
               </h2>
               <p>
-                Cosmic Together is a calmer way to shop fashion, home, and
-                gadgets — a little guidance from a concierge that actually
+                Cosmic Mart is a calmer way to shop fashion, home, and
+                gadgets — a little guidance from Cosmo, who actually
                 listens, your favorite people in the decision, and a way to see
                 it in your world before it’s ever in your hands.
               </p>

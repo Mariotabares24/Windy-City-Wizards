@@ -230,7 +230,7 @@ export function CirclePanel({
             <input
               aria-label="Message your circle"
               maxLength={1000}
-              placeholder="Your take? Try @cosmic…"
+              placeholder="Your take? Try @cosmo…"
               value={text}
               onChange={(e) => setText(e.target.value)}
             />

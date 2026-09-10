@@ -2,13 +2,12 @@ import { ArrowUpRight, ShoppingBag, UsersRound } from 'lucide-react';
 import { CosmicMark } from './cosmic-mark';
 export function Brand() {
   return (
-    <a href="/" className="brand" aria-label="Cosmic Together home">
+    <a href="/" className="brand" aria-label="Cosmic Mart home">
       <span className="brand-mark">
         <CosmicMark size={23} />
       </span>
       <span>
-        cosmic<span className="brand-light">together</span>
-        <small>BY COSMIC MART</small>
+        cosmic<span className="brand-light">mart</span>
       </span>
     </a>
   );

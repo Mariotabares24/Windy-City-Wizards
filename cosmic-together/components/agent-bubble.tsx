@@ -27,7 +27,7 @@ const newId = () =>
 const greeting: Message = {
   id: 'greeting',
   role: 'assistant',
-  text: 'Hi — I’m your Cosmic Concierge. Tell me what you’re looking for and I’ll pull together a shortlist. Try “a warm floor lamp for my reading corner”.',
+  text: 'Hi — I’m Cosmo. Tell me what you’re looking for and I’ll pull together a shortlist. Try “a warm floor lamp for my reading corner”.',
 };
 
 export function AgentBubble() {
@@ -137,7 +137,7 @@ export function AgentBubble() {
             open
             ref={panel}
             className="agent-panel"
-            aria-label="Cosmic Concierge chat"
+            aria-label="Cosmo chat"
             onKeyDown={onKeyDown}
             initial={reduce ? false : { opacity: 0, y: 16, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -149,12 +149,12 @@ export function AgentBubble() {
                 <Sparkles size={17} />
               </span>
               <div>
-                <strong>Cosmic Concierge</strong>
+                <strong>Cosmo</strong>
                 <span>A shortlist, whenever you need one.</span>
               </div>
               <button
                 className="icon-button"
-                aria-label="Close concierge"
+                aria-label="Close Cosmo"
                 onClick={() => setOpen(false)}
               >
                 <X size={18} />
@@ -229,7 +229,7 @@ export function AgentBubble() {
             >
               <input
                 ref={field}
-                aria-label="Ask the concierge"
+                aria-label="Ask Cosmo"
                 placeholder="What are you shopping for?"
                 value={input}
                 maxLength={1000}
@@ -248,7 +248,7 @@ export function AgentBubble() {
       <button
         ref={launcher}
         className={'agent-launcher' + (open ? ' is-open' : '')}
-        aria-label={open ? 'Close Cosmic Concierge' : 'Open Cosmic Concierge'}
+        aria-label={open ? 'Close Cosmo' : 'Open Cosmo'}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
       >

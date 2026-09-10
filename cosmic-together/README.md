@@ -1,4 +1,4 @@
-# Cosmic Together
+# Cosmic Mart
 
 A deployed social-shopping prototype for the Cosmic Mart / Accenture APEX scenario. The app connects a curated catalog, a constrained shopping concierge, shared circles, product visualization, and a human-confirmed bag.
 
@@ -28,7 +28,7 @@ The integration suite needs the local server and migrated database. It creates d
 
 - 36 fictional products across Fashion, Home & living, and Gadgets; search, product pages, variants, and three-product comparison.
 - A validated, deterministic concierge with intent parsing, hard budget/formality/category filtering, catalog research, selected palette matching, sample market availability, social ranking, and evidence summaries.
-- Database-backed invite circles: anonymous guest joins, 2.5-second polling, presence, chat, contextual `@cosmic` answers, repeat-safe voting, shared shortlists, host removal/end controls, and explicitly labeled demo friend.
+- Database-backed invite circles: anonymous guest joins, 2.5-second polling, presence, chat, contextual `@cosmo` answers, repeat-safe voting, shared shortlists, host removal/end controls, and explicitly labeled demo friend.
 - Durable private preferences and carts; quantity validation across variants; review-version checks prevent another tab’s changes from being silently confirmed.
 - Shoulder-landmark fashion preview using locally bundled MediaPipe; damped garment alignment; camera permission/error/recovery states.
 - Physically shaded 3D garment, lamp, chair, headphones, and speaker prototypes; home rotation/placement and fixed model scale; three captioned gadget tutorials with articulated translucent hand.

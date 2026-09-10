@@ -255,7 +255,7 @@ export function Shop({ demo = false }: { demo?: boolean }) {
                   <Sparkles size={18} />
                 </span>
                 <div>
-                  <strong>Your Cosmic Concierge</strong>
+                  <strong>Cosmo</strong>
                   <span>
                     {prefs.mode === 'solo'
                       ? 'Just this session. Just for you.'

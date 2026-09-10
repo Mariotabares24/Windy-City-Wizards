@@ -214,13 +214,6 @@ select {
 .brand-light {
   font-weight: 350;
 }
-.brand small {
-  display: block;
-  font-size: 10px;
-  letter-spacing: 2.4px;
-  margin-top: 6px;
-  color: #9f99aa;
-}
 .site-header nav {
   display: flex;
   gap: 29px;

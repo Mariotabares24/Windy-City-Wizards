@@ -575,7 +575,7 @@ export function Experience({ product: p }: { product: Product }) {
                   </p>
                   <a
                     className="button small"
-                    download="cosmic-together-preview.jpg"
+                    download="cosmic-mart-preview.jpg"
                     href={snapshot}
                   >
                     <Download size={14} /> Save image

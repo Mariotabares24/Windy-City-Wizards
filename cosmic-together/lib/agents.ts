@@ -160,7 +160,7 @@ export function orchestrate(input: unknown): ShoppingResult {
     constraints: { budget, category, formality },
     steps: [
       {
-        agent: 'Cosmic Concierge',
+        agent: 'Cosmo',
         label: 'Understanding your occasion',
         evidence: `${category}; budget $${budget}${category === 'fashion' ? '; ' + formality : ''}`,
       },

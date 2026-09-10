@@ -16,7 +16,7 @@ const geistMono = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: 'Cosmic Together — Find your kind of perfect',
+  title: 'Cosmic Mart — Find your kind of perfect',
   description:
     'A little guidance. Your favorite people. A whole new way to shop fashion, home, and gadgets.',
 };

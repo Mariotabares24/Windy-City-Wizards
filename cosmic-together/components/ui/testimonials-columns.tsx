@@ -9,7 +9,7 @@ export type Testimonial = {
   role: string;
 };
 
-// Warm, on-brand second opinions from "your people" — Cosmic Together's voice.
+// Warm, on-brand second opinions from "your people" — Cosmic Mart's voice.
 export const testimonials: Testimonial[] = [
   {
     text: 'I described a fall wedding in one sentence and got three looks that actually felt like me. My group chat picked the winner.',
@@ -36,7 +36,7 @@ export const testimonials: Testimonial[] = [
     role: 'Everyday listening',
   },
   {
-    text: 'The concierge didn’t push. It listened, then gave me a shortlist I could stand behind. That’s rare.',
+    text: 'Cosmo didn’t push. It listened, then gave me a shortlist I could stand behind. That’s rare.',
     image: 'https://i.pravatar.cc/120?img=26',
     name: 'Grace Lin',
     role: 'Refined a shortlist',

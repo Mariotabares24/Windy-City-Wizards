@@ -6,7 +6,7 @@ The product addresses a case-study hypothesis: trusted social advice and visual 
 flowchart TD
   Shopper[Shopper: goal and constraints] --> UI[React / TypeScript commerce]
   Friend[Invited friend] --> Circle[Shopping circle]
-  UI --> Concierge[Cosmic Concierge orchestrator]
+  UI --> Concierge[Cosmo orchestrator]
   Concierge --> Context[Style and context rules]
   Concierge --> Research[Product research and hard filters]
   Concierge --> Local[Sample availability evidence]
