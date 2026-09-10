@@ -263,7 +263,7 @@ export function AgentBubble() {
           : 'Cosmo is working…';
 
   return (
-    <div className={'agent-dock' + (open ? ' is-open' : '')}>
+    <div className="agent-bubble-root">
       <AnimatePresence>
         {open && (
           <motion.dialog
