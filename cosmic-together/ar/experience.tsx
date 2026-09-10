@@ -219,7 +219,7 @@ export function Experience({ product: p }: { product: Product }) {
     const imageHeight = Math.round((out.width * source.height) / source.width);
     out.height = imageHeight + 60;
     const ctx = out.getContext('2d')!;
-    ctx.fillStyle = '#272d29';
+    ctx.fillStyle = '#232346';
     ctx.fillRect(0, 0, out.width, out.height);
     if (camera && video.current && video.current.readyState >= 2) {
       const v = video.current;
@@ -242,9 +242,9 @@ export function Experience({ product: p }: { product: Product }) {
       ctx.restore();
     }
     ctx.drawImage(source, 0, 0, out.width, imageHeight);
-    ctx.fillStyle = '#101514bb';
+    ctx.fillStyle = '#0a0a1abb';
     ctx.fillRect(0, out.height - 60, out.width, 60);
-    ctx.fillStyle = '#f4f0e8';
+    ctx.fillStyle = '#efecf5';
     ctx.font = '16px sans-serif';
     ctx.fillText(p.name + ' · approximate preview', 20, out.height - 25);
     out.toBlob(

@@ -1,17 +1,17 @@
 import type { Metadata } from 'next';
-import { Manrope, Instrument_Serif } from 'next/font/google';
+import { Inter, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import { AgentBubble } from '@/components/agent-bubble';
+import { Starfield } from '@/components/starfield';
 
-const geistSans = Manrope({
+const geistSans = Inter({
   variable: '--font-geist-sans',
   subsets: ['latin'],
 });
 
-const geistMono = Instrument_Serif({
+const geistMono = Space_Grotesk({
   variable: '--font-editorial',
-  weight: '400',
-  style: ['normal', 'italic'],
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
 });
 
@@ -31,6 +31,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Starfield />
         {children}
         <AgentBubble />
       </body>
