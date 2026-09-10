@@ -74,6 +74,7 @@ export async function orchestrate(input: unknown): Promise<ShoppingResult> {
     budget,
     formality,
     style: r.style,
+    styleProfile: r.styleProfile,
     location: r.location,
     colors: r.colors,
     votes: r.votes,
@@ -120,6 +121,13 @@ export async function orchestrate(input: unknown): Promise<ShoppingResult> {
         evidence: cosmo.recommendations.rationale,
       },
       {
+        agent: 'Friend influence',
+        label: 'Tallying circle votes',
+        evidence: cosmo.friends.friendCount
+          ? `${cosmo.friends.friendCount} ${cosmo.friends.friendCount === 1 ? 'vote' : 'votes'}${cosmo.friends.topPick ? `; leading: ${cosmo.friends.topPick}` : ''}`
+          : 'No circle votes yet',
+      },
+      {
         agent: 'Stylist',
         label: 'Styling the shortlist',
         evidence: cosmo.stylist.palette.join(', '),
@@ -134,10 +142,12 @@ export async function orchestrate(input: unknown): Promise<ShoppingResult> {
     localization: {
       currency: cosmo.localization.currency,
       symbol: cosmo.localization.symbol,
+      rate: cosmo.localization.rate,
       region: cosmo.localization.region,
       shippingEstimate: cosmo.localization.shippingEstimate,
     },
     stylist: cosmo.stylist,
+    friends: cosmo.friends,
     budgetCheck: cosmo.budget,
     reviews: cosmo.reviews,
     sizes: cosmo.sizes,

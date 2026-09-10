@@ -25,7 +25,12 @@ test('catalog has unique valid products across all three categories', () => {
   for (const p of products) {
     assert(p.price > 0);
     assert(p.colors.includes(p.color));
-    assert(p.image.startsWith('/images/'));
+    // Storefront products use local art; the merged Cosmo products keep the
+    // remote placeholder imagery they shipped with on the cosmos-agent branch.
+    assert(
+      p.image.startsWith('/images/') ||
+        p.image.startsWith('https://images.unsplash.com/'),
+    );
   }
 });
 test('golden path produces distinct available wedding choices', async () => {
@@ -37,7 +42,7 @@ test('golden path produces distinct available wedding choices', async () => {
   });
   assert(r.recommendations.length > 1);
   assert(r.recommendations.length <= 3);
-  assert.equal(r.steps.length, 5);
+  assert.equal(r.steps.length, 6);
   assert.equal(new Set(r.recommendations.map((x) => x.productId)).size, r.recommendations.length);
   for (const x of r.recommendations) {
     const p = productById(x.productId)!;

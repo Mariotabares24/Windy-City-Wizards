@@ -8,6 +8,13 @@ export type CosmoIntent = {
   budget: number;
   formality: string;
   style?: 'familiar' | 'explore';
+  styleProfile?:
+    | 'minimalist'
+    | 'classic'
+    | 'bohemian'
+    | 'edgy'
+    | 'romantic'
+    | 'sporty';
   location: string;
   colors: string[];
   votes: Record<string, number>;
@@ -40,6 +47,13 @@ export type LocalizationResult = {
   rate: number;
   region: string;
   shippingEstimate: string;
+};
+
+export type FriendInfluenceResult = {
+  agentId: 'friendInfluence';
+  votes: Record<string, number>;
+  friendCount: number;
+  topPick?: string;
 };
 
 export type StylistResult = {

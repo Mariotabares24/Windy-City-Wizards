@@ -24,6 +24,17 @@ const BY_OCCASION: Record<string, string[]> = {
   casual: ['denim on denim', 'oversized tees', 'platform sneakers'],
 };
 
+// Style tables from the cosmos-agent branch, keyed to the styles the Cosmo
+// intake offers.
+const BY_STYLE: Record<string, string[]> = {
+  minimalist: ['clean lines', 'neutral palette', 'structured silhouettes', 'quality basics'],
+  bohemian: ['flowy fabrics', 'earth tones', 'embroidery', 'layered jewelry'],
+  classic: ['timeless cuts', 'navy and white', 'pearl accessories', 'loafers'],
+  edgy: ['leather accents', 'asymmetric cuts', 'hardware details', 'bold prints'],
+  romantic: ['ruffles', 'floral prints', 'pastel hues', 'delicate lace'],
+  sporty: ['athleisure', 'color blocking', 'sneakers', 'functional pockets'],
+};
+
 const BY_FORMALITY: Record<string, string[]> = {
   'black tie': ['floor-length', 'sculpted tailoring', 'quiet luxury'],
   formal: ['power suiting', 'structured silhouettes', 'monochrome sets'],
@@ -40,12 +51,16 @@ function detectOccasion(query: string, category: string) {
 
 export function trendAgent(intent: CosmoIntent): TrendResult {
   const occasion = detectOccasion(intent.query, intent.category);
+  // Occasion and style tables are merged, as on the cosmos-agent branch, with
+  // formality standing in when the shopper never picked a style.
   const merged = [
     ...new Set([
       ...(BY_OCCASION[occasion] || []),
-      ...(BY_FORMALITY[intent.formality] || []),
+      ...(intent.styleProfile
+        ? BY_STYLE[intent.styleProfile] || []
+        : BY_FORMALITY[intent.formality] || []),
     ]),
-  ].slice(0, 5);
+  ].slice(0, 6);
   const globalSet = new Set(GLOBAL);
   const overlap = merged.filter((t) => globalSet.has(t)).length;
   const score = merged.length

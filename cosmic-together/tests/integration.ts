@@ -68,7 +68,7 @@ const result = await host.request('/api/concierge', {
 // The merged Cosmo catalog gives this query more valid matches, so assert the
 // shortlist is capped and every pick still honours the constraints.
 assert(result.recommendations.length > 1 && result.recommendations.length <= 3);
-assert.equal(result.steps.length, 5);
+assert.equal(result.steps.length, 6);
 assert(result.trends && result.localization && result.stylist);
 pass('recommendation orchestration');
 const low = await host.request('/api/concierge', {

@@ -1,3 +1,4 @@
+import { friendAgent } from './friends';
 import { localizationAgent } from './localization';
 import { recommendationAgent } from './recommendation';
 import { stylistAgent } from './stylist';
@@ -10,6 +11,7 @@ import {
 } from './utils';
 import type {
   BudgetResult,
+  FriendInfluenceResult,
   CosmoIntent,
   LocalizationResult,
   RecommendationResult,
@@ -26,6 +28,7 @@ export type CosmoResult = {
   recommendations: RecommendationResult;
   trends: TrendResult;
   localization: LocalizationResult;
+  friends: FriendInfluenceResult;
   stylist: StylistResult;
   stock: StockResult[];
   budget: BudgetResult;
@@ -69,6 +72,12 @@ export async function cosmoOrchestrator(
   const stylist = await run('stylist', 'Styling the shortlist', () => stylistAgent(intent, trends), timings);
 
   const picked = recommendations.scored.map((s) => s.product);
+  const friends = await run(
+    'friends',
+    'Tallying circle votes',
+    () => friendAgent(intent, picked),
+    timings,
+  );
   const [stock, budget, reviews, sizes] = await Promise.all([
     run('stock', 'Confirming stock', () => stockChecker(picked), timings),
     run('budget', 'Validating budget', () => budgetChecker(picked, intent), timings),
@@ -80,6 +89,7 @@ export async function cosmoOrchestrator(
     recommendations,
     trends,
     localization,
+    friends,
     stylist,
     stock,
     budget,

@@ -10,7 +10,19 @@ export const requestSchema = z.object({
     .enum(['casual', 'semi-formal', 'formal', 'black tie'])
     .optional(),
   style: z.enum(['familiar', 'explore']).optional(),
-  location: z.enum(['Chicago', 'New York', 'London']).default('Chicago'),
+  // The Cosmo intake asks for a style in the cosmos-agent vocabulary and lets
+  // the shopper type any city, so this is wider than the stored preference.
+  styleProfile: z
+    .enum([
+      'minimalist',
+      'classic',
+      'bohemian',
+      'edgy',
+      'romantic',
+      'sporty',
+    ])
+    .optional(),
+  location: z.string().trim().min(1).max(60).default('Chicago'),
   colors: z.array(z.string().max(24)).max(5).default([]),
   votes: z.record(z.string(), z.number().min(0).max(20)).default({}),
   demo: z.boolean().default(false),
@@ -33,6 +45,7 @@ export const trendsSchema = z.object({
 export const localizationSchema = z.object({
   currency: z.string(),
   symbol: z.string(),
+  rate: z.number(),
   region: z.string(),
   shippingEstimate: z.string(),
 });
@@ -40,6 +53,11 @@ export const stylistSchema = z.object({
   advice: z.string(),
   outfitTips: z.array(z.string()),
   palette: z.array(z.string()),
+});
+export const friendsSchema = z.object({
+  votes: z.record(z.string(), z.number()),
+  friendCount: z.number(),
+  topPick: z.string().optional(),
 });
 export const budgetSchema = z.object({
   approved: z.boolean(),
@@ -63,6 +81,7 @@ export const resultSchema = z.object({
   trends: trendsSchema.optional(),
   localization: localizationSchema.optional(),
   stylist: stylistSchema.optional(),
+  friends: friendsSchema.optional(),
   budgetCheck: budgetSchema.optional(),
   reviews: z
     .array(
