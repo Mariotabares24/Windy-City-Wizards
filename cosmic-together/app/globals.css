@@ -2697,8 +2697,10 @@ h2,
   letter-spacing: -0.035em !important;
 }
 .hero h1 {
-  font-size: clamp(58px, 6.2vw, 104px);
-  line-height: 0.95;
+  /* Scaled to match the narrower serif this replaced, so the explicit <br>
+     line breaks still fit the 42% copy column instead of wrapping. */
+  font-size: clamp(43px, 4.6vw, 77px);
+  line-height: 1;
   letter-spacing: -0.045em !important;
 }
 .hero h1 em {
@@ -2728,7 +2730,7 @@ h2,
 }
 .hero-art::after {
   border-radius: 4px;
-  background: linear-gradient(180deg, #10151555, transparent 40%, #101515cc);
+  background: linear-gradient(180deg, #0a0a1a55, transparent 40%, #0a0a1acc);
 }
 .hero-editorial {
   position: absolute;
@@ -2933,7 +2935,7 @@ h2,
   font-size: 11px;
   text-align: left;
   color: #fff;
-  background: linear-gradient(transparent, #101515e8);
+  background: linear-gradient(transparent, #0a0a1ae8);
   pointer-events: none;
 }
 .coverflow-cover > span b {
@@ -3162,7 +3164,7 @@ h2,
 .scroll-hero-bg-scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, #10151566, #101515cc);
+  background: linear-gradient(180deg, #0a0a1a66, #0a0a1acc);
 }
 .scroll-hero-viewport {
   position: relative;
@@ -3241,10 +3243,13 @@ h2,
 .scroll-hero-title span {
   display: block;
   font-family: var(--font-editorial), 'Space Grotesk', sans-serif;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: -0.04em;
-  line-height: 0.98;
-  font-size: clamp(40px, 7vw, 108px);
+  line-height: 1.04;
+  /* Space Grotesk sets ~34% wider than the serif this replaced; scaled down so
+     the long second line still fits on one line and the words slide apart cleanly. */
+  font-size: clamp(30px, 5.2vw, 82px);
+  text-wrap: balance;
   color: #eee8f7;
   text-shadow: 0 2px 40px #000a;
   will-change: transform;
