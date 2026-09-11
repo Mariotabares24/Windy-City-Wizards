@@ -2,9 +2,7 @@
 import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { makeGhostHand } from './models';
 import { loadProduct, disposeObject } from './load-product';
-import { alignHandToControl } from './hand-guide';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
 import type { Product } from '@/lib/catalog';
@@ -21,14 +19,10 @@ export type SpatialHandle = {
 };
 type Props = {
   product: Product;
-  color: string;
   camera: boolean;
   pose?: React.RefObject<PoseAnchor | null>;
   rotation: number;
   position: number;
-  tutorial: number;
-  playing: boolean;
-  ghost: boolean;
   onError: () => void;
   onReady: () => void;
   // Reports drag/twist back so the accessible sliders stay in sync (camera mode).
@@ -38,14 +32,10 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
   function SpatialCanvas(
     {
       product,
-      color,
       camera,
       pose,
       rotation,
       position,
-      tutorial,
-      playing,
-      ghost,
       onError,
       onReady,
       onManipulate,
@@ -55,10 +45,10 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
     const host = useRef<HTMLDivElement>(null);
     const canvas = useRef<HTMLCanvasElement | null>(null);
     const resetView = useRef<() => void>(() => {});
-    const current = useRef({ rotation, position, tutorial, playing, ghost });
+    const current = useRef({ rotation, position });
     useEffect(() => {
-      current.current = { rotation, position, tutorial, playing, ghost };
-    }, [rotation, position, tutorial, playing, ghost]);
+      current.current = { rotation, position };
+    }, [rotation, position]);
     // Keep the manipulate callback current without re-running the scene effect.
     const manipulate = useRef(onManipulate);
     useEffect(() => {
@@ -97,8 +87,6 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
       el.appendChild(renderer.domElement);
       const scene = new THREE.Scene();
       const pmrem = new THREE.PMREMGenerator(renderer);
-      // Start on RoomEnvironment so IBL is present immediately, then upgrade to
-      // the studio HDRI for crisper, more photographic specular once it loads.
       const roomEnvironment = new RoomEnvironment();
       const roomMap = pmrem.fromScene(roomEnvironment, 0.04);
       roomEnvironment.dispose();
@@ -119,9 +107,7 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
           scene.environmentIntensity = 1;
         },
         undefined,
-        () => {
-          // Keep RoomEnvironment if the HDRI is unavailable.
-        },
+        () => {},
       );
       const initialWidth = el.clientWidth || 600;
       const initialHeight = el.clientHeight || 560;
@@ -146,31 +132,37 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
           ? 0
           : product.category === 'home'
             ? 2.4
-            : product.category === 'gadgets'
-              ? 0.6
-              : 1.1,
+            : product.model === 'watch'
+              ? 0.35
+              : product.category === 'gadgets'
+                ? 0.6
+                : 1.1,
         tracked
           ? 0
           : product.category === 'home'
             ? 1.4
-            : product.category === 'gadgets'
-              ? 0.32
-              : 0.15,
+            : product.model === 'watch'
+              ? 0.12
+              : product.category === 'gadgets'
+                ? 0.32
+                : 0.15,
         tracked
           ? 1000
           : product.category === 'home'
             ? 3.3
-            : product.category === 'gadgets'
-              ? 0.8
-              : 1.6,
+            : product.model === 'watch'
+              ? 0.45
+              : product.category === 'gadgets'
+                ? 0.8
+                : 1.6,
       );
       const center =
-        product.model === 'lamp'
-          ? 0.77
-          : product.model === 'chair'
-            ? 0.43
-            : product.model === 'speaker'
-              ? 0.12
+        product.model === 'chair'
+          ? 0.43
+          : product.model === 'watch'
+            ? 0.04
+            : product.model === 'garment'
+              ? 0.45
               : 0;
       view.lookAt(0, tracked ? 0 : center, 0);
       const controls = new OrbitControls(view, renderer.domElement);
@@ -181,9 +173,11 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
       controls.minDistance =
         product.category === 'home'
           ? 1.7
-          : product.category === 'gadgets'
-            ? 0.45
-            : 1;
+          : product.model === 'watch'
+            ? 0.2
+            : product.category === 'gadgets'
+              ? 0.45
+              : 1;
       controls.maxDistance = product.category === 'home' ? 7 : 3;
       controls.maxPolarAngle = Math.PI * 0.85;
       if (!camera) controls.update();
@@ -234,24 +228,11 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
         new THREE.ShadowMaterial({ opacity: 0.22 }),
       );
       ground.rotation.x = -Math.PI / 2;
-      ground.position.y =
-        product.category === 'home' || product.model === 'speaker'
-          ? 0
-          : product.category === 'fashion'
-            ? -0.42
-            : -0.17;
+      ground.position.y = 0;
       ground.receiveShadow = true;
       ground.visible = !tracked;
       scene.add(ground);
-      const { hand, joints, tip } = makeGhostHand();
-      scene.add(hand);
-      hand.visible = false;
-      let tick = 0;
-      let previous = performance.now();
       let ready = false;
-      const reduce = window.matchMedia(
-        '(prefers-reduced-motion: reduce)',
-      ).matches;
       function resize() {
         if (disposed || !assetReady) return;
         const w = el.clientWidth || 600,
@@ -259,7 +240,6 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
         renderer.setSize(w, h);
         if (view instanceof THREE.PerspectiveCamera) {
           view.aspect = w / h;
-          // Fit the full object at both desktop and portrait aspect ratios.
           const verticalFov = THREE.MathUtils.degToRad(view.fov);
           const horizontalFov =
             2 * Math.atan(Math.tan(verticalFov / 2) * view.aspect);
@@ -311,7 +291,7 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
       }
       const observer = new ResizeObserver(resize);
       observer.observe(el);
-      void loadProduct(product, color)
+      void loadProduct(product)
         .then((loaded) => {
           if (disposed) {
             disposeObject(loaded);
@@ -319,10 +299,6 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
           }
           productGroup.add(loaded);
           bounds.setFromObject(productGroup);
-          if (product.category === 'gadgets') {
-            bounds.max.x += 0.17;
-            controls.target.x = 0.045;
-          }
           ground.position.y = bounds.min.y - 0.002;
           assetReady = true;
           resize();
@@ -332,12 +308,7 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
         });
       const loop = () => {
         if (disposed) return;
-        const now = performance.now();
-        const delta = Math.min(0.05, (now - previous) / 1000);
-        previous = now;
         const s = current.current;
-        if (s.playing && !reduce) tick += delta;
-        // Pick up slider / reset changes that arrived through props.
         if (s.rotation !== lastRotation) {
           manip.rotY = THREE.MathUtils.degToRad(s.rotation);
           lastRotation = s.rotation;
@@ -346,15 +317,12 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
           manip.x = s.position / 100;
           lastPosition = s.position;
         }
-        hand.visible = product.category === 'gadgets' && s.ghost;
-        const phase = (Math.sin(tick * 1.9) + 1) / 2;
         if (tracked) {
           const anchor = pose?.current;
           if (anchor?.visible) {
             productGroup.visible = true;
             const scale = (anchor.width / 0.57) * manip.scale;
             productGroup.scale.setScalar(scale);
-            // Manual drag nudges the garment on top of the pose anchor.
             productGroup.position.set(
               anchor.x + manip.offX,
               anchor.y + manip.offY,
@@ -368,23 +336,6 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
           productGroup.position.set(manip.x, 0, manip.z);
           productGroup.scale.setScalar(manip.scale);
         }
-        if (product.category === 'gadgets' && assetReady) {
-          const ear = productGroup.getObjectByName('right-ear');
-          if (ear) ear.rotation.z = s.tutorial === 2 ? -phase * 1.0 : 0;
-          joints.forEach((joint, i) => {
-            joint.rotation.x = i === 0 ? -0.08 : -1.05;
-          });
-          const anchor = productGroup.getObjectByName('control-' + s.tutorial);
-          if (anchor) {
-            productGroup.updateMatrixWorld(true);
-            alignHandToControl(
-              hand,
-              tip,
-              anchor,
-              0.006 + (s.tutorial === 2 ? 0.008 : (1 - phase) * 0.035),
-            );
-          } else hand.visible = false;
-        }
         if (!camera) controls.update();
         renderer.render(scene, view);
         if (!ready && assetReady) {
@@ -392,8 +343,8 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
           onReady();
         }
       };
-      // --- Direct manipulation (camera AR): drag = move, pinch = scale,
-      //     twist = rotate; wheel = scale, shift/right-drag = rotate for mouse.
+      // Direct manipulation (camera AR): drag = move, pinch = scale,
+      // twist = rotate; wheel = scale, shift/right-drag = rotate for mouse.
       const clampN = (v: number, lo: number, hi: number) =>
         Math.min(hi, Math.max(lo, v));
       const raycaster = new THREE.Raycaster();
@@ -497,8 +448,6 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
         } else {
           const hit = planePoint(e.clientX, e.clientY);
           if (hit) {
-            // Keep x within the "move" slider's range so the two stay in sync;
-            // z (depth) is the extra freedom drag adds beyond the sliders.
             manip.x = clampN(hit.x + drag.grabX, -0.8, 0.8);
             manip.z = clampN(hit.z + drag.grabZ, -1.6, 1.2);
           }
@@ -566,7 +515,7 @@ export const SpatialCanvas = forwardRef<SpatialHandle, Props>(
         canvas.current = null;
         resetView.current = () => {};
       };
-    }, [product, color, camera, pose, onError, onReady]);
+    }, [product, camera, pose, onError, onReady]);
     return (
       <div
         className="spatial-canvas"

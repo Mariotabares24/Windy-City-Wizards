@@ -18,7 +18,7 @@ flowchart TD
   UI --> Spatial[Category visualization]
   Spatial --> Fashion[Local pose tracking + garment model]
   Spatial --> Home[Fixed-scale model + manual placement]
-  Spatial --> Gadget[Product model + authored ghost hand]
+  Spatial --> Gadget[Product model + direct manipulation]
   Spatial --> Capture[Private local snapshot]
   Capture --> Consent[Explicit share confirmation]
   Consent --> R2[(Private R2 snapshots)]

@@ -36,7 +36,8 @@
     "tests/**",
     ".wrangler/**",
     "components/ui/**",
-    "hooks/use-mobile.ts"
+    "hooks/use-mobile.ts",
+    "public/draco/**"
   ],
   "rules": {
     "nextjs/no-html-link-for-pages": "off",

@@ -10,28 +10,34 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { api } from '@/lib/client';
-import { colorHex } from '@/lib/catalog';
+const paletteHex: Record<string, string> = {
+  Midnight: '#263147',
+  Charcoal: '#41414b',
+  Camel: '#b18a61',
+  Ivory: '#e6dfd1',
+  Forest: '#465b48',
+};
 import type { Preferences } from '@/lib/contracts';
+import { prefsStore, DEFAULT_PREFS } from '@/lib/prefs-store';
 export function Settings() {
-  const [prefs, setPrefs] = useState<Preferences>({
-    name: 'Mario',
-    mode: 'solo',
-    history: false,
-    location: 'Chicago',
-    colors: [],
-  });
+  const [prefs, setPrefsLocal] = useState<Preferences>(prefsStore.get());
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const [erase, setErase] = useState(false);
+  function setPrefs(p: Preferences) {
+    setPrefsLocal(p);
+    prefsStore.set(p);
+  }
   useEffect(() => {
     api<{ preferences: Preferences }>('/api/profile')
-      .then((d) => setPrefs(d.preferences))
+      .then((d) => setPrefs({ ...DEFAULT_PREFS, ...d.preferences }))
       .catch((e) => setMessage(e.message));
   }, []);
   async function save() {
     setBusy(true);
     try {
       await api('/api/profile', prefs, 'PUT');
+      prefsStore.set(prefs);
       setMessage('Your preferences are saved.');
     } catch (e) {
       setMessage((e as Error).message);
@@ -84,15 +90,16 @@ export function Settings() {
           <div className="privacy-options">
             {[
               {
-                id: 'solo',
-                name: 'Solo',
+                id: 'personalized',
+                name: 'Personalized (default)',
                 detail:
-                  'Recommendations use only what you tell us during this visit.',
+                  'Cosmo remembers your color preferences, invites friends, and lets you share shortlists.',
               },
               {
-                id: 'personalized',
-                name: 'Private personalized',
-                detail: 'Use the color preferences you explicitly save below.',
+                id: 'solo',
+                name: 'Private shopping',
+                detail:
+                  'Session-only. Friend invites and sharing are turned off. Nothing about this visit is saved.',
               },
             ].map((m) => (
               <button
@@ -135,7 +142,7 @@ export function Settings() {
                   })
                 }
               >
-                <i style={{ background: colorHex[c] }} />
+                <i style={{ background: paletteHex[c] }} />
                 {c}
               </button>
             ))}
@@ -193,13 +200,7 @@ export function Settings() {
                 setBusy(true);
                 try {
                   await api('/api/profile', undefined, 'DELETE');
-                  setPrefs({
-                    name: 'Mario',
-                    mode: 'solo',
-                    history: false,
-                    location: 'Chicago',
-                    colors: [],
-                  });
+                  setPrefs(DEFAULT_PREFS);
                   setMessage('Your private shopping data has been cleared.');
                   setErase(false);
                 } catch (e) {

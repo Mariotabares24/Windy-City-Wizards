@@ -4,8 +4,8 @@ import { database } from '@/db';
 import { identity, json, failure, protect, parseBody } from '@/lib/server';
 const defaults = {
   name: 'Mario',
-  mode: 'solo',
-  history: false,
+  mode: 'personalized',
+  history: true,
   location: 'Chicago',
   colors: [],
 };

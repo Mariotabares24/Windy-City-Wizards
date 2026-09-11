@@ -25,6 +25,9 @@ outputs/
 work/
 *.tar.gz
 
+# ---- raw source assets (kept locally; compressed copies live in public/) ----
+cosmic-together/new images for hack/
+
 # ---- environment / secrets ----
 .env
 .env.*

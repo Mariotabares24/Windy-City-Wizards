@@ -31,7 +31,7 @@ The integration suite needs the local server and migrated database. It creates d
 - Database-backed invite circles: anonymous guest joins, 2.5-second polling, presence, chat, contextual `@cosmo` answers, repeat-safe voting, shared shortlists, host removal/end controls, and explicitly labeled demo friend.
 - Durable private preferences and carts; quantity validation across variants; review-version checks prevent another tab’s changes from being silently confirmed.
 - Shoulder-landmark fashion preview using locally bundled MediaPipe; damped garment alignment; camera permission/error/recovery states.
-- Physically shaded 3D garment, lamp, chair, headphones, and speaker prototypes; home rotation/placement and fixed model scale; three captioned gadget tutorials with articulated translucent hand.
+- Physically shaded 3D previews for garments, chairs, headphones, and a watch, lit by a real studio HDRI. Home category adds rotation and horizontal-placement controls; camera mode adds drag-to-move, pinch-to-scale, and twist-to-rotate.
 - Optional local camera overlays; private JPEG capture/download; separately confirmed circle snapshot sharing through private R2 storage.
 - Responsive layout, keyboard controls, focus states, modal primitives, alternative text, reduced motion handling, and camera-free fallbacks.
 

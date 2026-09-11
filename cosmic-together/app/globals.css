@@ -3729,3 +3729,166 @@ h2,
     animation: none;
   }
 }
+
+/* Cosmo state-machine UI */
+.cosmo-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.cosmo-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 12px;
+  font-size: 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #1c1c34;
+  color: var(--foreground);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.cosmo-chip:hover:not(:disabled) {
+  background: #26264a;
+  transform: translateY(-1px);
+}
+.cosmo-chip:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.cosmo-chip.primary {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: transparent;
+}
+.cosmo-phone-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #16162f;
+  border: 1px solid var(--border);
+  font-size: 13px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+.cosmo-agent-run {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #16162f;
+  border: 1px solid var(--border);
+  margin-top: 6px;
+}
+.cosmo-agent-run strong {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+.cosmo-result-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #16162f;
+}
+.cosmo-result-tap {
+  display: flex;
+  gap: 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+}
+.cosmo-emoji {
+  font-size: 28px;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  background: #1c1c34;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.cosmo-result-body {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.cosmo-result-body strong {
+  font-weight: 500;
+  font-size: 13px;
+}
+.cosmo-price {
+  color: var(--primary);
+  font-size: 12px;
+}
+.cosmo-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+.cosmo-badge {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #22224a;
+  color: #c8bde0;
+}
+.cosmo-badge.top {
+  background: #3d2a5c;
+  color: #e6d6ff;
+}
+.cosmo-friend-line {
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.cosmo-friend-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #16162f;
+  border: 1px solid var(--border);
+  margin-top: 6px;
+}
+.cosmo-friend-picker strong {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  font-weight: 500;
+}
+.cosmo-friend-picker ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.cosmo-friend-picker li.offline {
+  opacity: 0.45;
+}
+.cosmo-friend-picker label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.cosmo-friend-picker li.offline label {
+  cursor: not-allowed;
+}

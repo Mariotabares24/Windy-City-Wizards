@@ -17,7 +17,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import { productById, money, colorHex, type Product } from '@/lib/catalog';
+import { productById, money, type Product } from '@/lib/catalog';
 import { api } from '@/lib/client';
 import type { ShoppingResult } from '@/lib/contracts';
 export function ProductCard({
@@ -201,17 +201,11 @@ export function CompareDialog({
 }
 export function AddToBag({
   product: p,
-  selectedColor,
-  onColorChange,
   rationale = 'Selected by you after reviewing the product.',
 }: {
   product: Product;
-  selectedColor?: string;
-  onColorChange?: (color: string) => void;
   rationale?: string;
 }) {
-  const [localColor, setColor] = useState(p.color);
-  const color = selectedColor ?? localColor;
   const [size, setSize] = useState('M');
   const [busy, setBusy] = useState(false);
   const [added, setAdded] = useState(false);
@@ -223,7 +217,7 @@ export function AddToBag({
       await api('/api/cart', {
         action: 'add',
         productId: p.id,
-        color,
+        color: p.color,
         size: p.category === 'fashion' ? size : 'One size',
         rationale,
       });
@@ -238,24 +232,8 @@ export function AddToBag({
     <div className="add-to-bag">
       <div className="option-row">
         <span>
-          Color <strong>{color}</strong>
+          Finish <strong>{p.color}</strong>
         </span>
-        <div className="swatches">
-          {p.colors.map((c) => (
-            <button
-              key={c}
-              className={color === c ? 'chosen' : ''}
-              style={{ background: colorHex[c] || '#777' }}
-              aria-label={c}
-              aria-pressed={color === c}
-              onClick={() => {
-                setColor(c);
-                onColorChange?.(c);
-                setAdded(false);
-              }}
-            />
-          ))}
-        </div>
       </div>
       {p.category === 'fashion' && (
         <label className="option-row">
